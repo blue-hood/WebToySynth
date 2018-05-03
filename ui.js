@@ -209,7 +209,7 @@ var UiComponent = class{
 		this._issel = false;
 
 		this.jqobj = $('<table style="position: absolute; border-collapse: collapse; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4); background-color: white; border: 1px solid lightgray; cursor: move; font-size: small; "></table>');
-		this._jqname = $('<input style="border: none; background-color: inherit; text-align: center; width: 80px; font-size: inherit; margin-right: 1em; ">');
+		this._jqname = $('<input style="border: none; background-color: inherit; text-align: center; width: 96px; font-size: inherit; ">');
 		this.name = this.com.constructor.name;
 
 		this.com.ins.forEach((in_, i) => {

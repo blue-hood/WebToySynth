@@ -652,3 +652,35 @@ var ctx = this._canvas.getContext('2d');
 		super.dispose();
 	}
 };
+
+var UpperSaturator = class extends Component{
+	get In(){ return {in_: 0, uplim: 1}; }
+	get Out(){ return {sat: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.outs[this.Out.sat].latch = Math.min(this.ins[this.In.in_].val, this.ins[this.In.uplim].val);
+		return this.update();
+	}
+};
+
+var LowerSaturator = class extends Component{
+	get In(){ return {in_: 0, lowlim: 1}; }
+	get Out(){ return {sat: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.outs[this.Out.sat].latch = Math.max(this.ins[this.In.in_].val, this.ins[this.In.lowlim].val);
+		return this.update();
+	}
+};

@@ -53,6 +53,8 @@
 			Mixer, 
 			Integrator, 
 			Differentiator, 
+			UpperSaturator,
+			LowerSaturator,
 			Speaker, 
 			Scope, 
 		], sk);
@@ -63,38 +65,43 @@
 			edit.import(file.ui, lut);
 		}
 
-		
+		var ctx;
+		var scproc;
 		window.AudioContext = window.AudioContext||window.webkitAudioContext;
+		var simStart = () => {
+			ctx = new AudioContext();
+			scproc = ctx.createScriptProcessor();
+			scproc.connect(ctx.destination);
 
-		var ctx = new AudioContext();
-		var scproc = ctx.createScriptProcessor();
+			scproc.onaudioprocess = (e) => {
+				try{
+					var out_l = e.outputBuffer.getChannelData(0);
+					var out_r = e.outputBuffer.getChannelData(1);
+					var skip = 2;
+					var srate = e.outputBuffer.sampleRate/skip;
 
-		var frame = 0;
-		scproc.onaudioprocess = (e) => {
-			try{
-				var out_l = e.outputBuffer.getChannelData(0);
-				var out_r = e.outputBuffer.getChannelData(1);
-				var skip = 2;
-				var srate = e.outputBuffer.sampleRate/skip;
+					//var curtime = (out_l.length*frame)/srate;
+					for(var i = 0; i<out_l.length; i+=skip){
+						//var time = curtime + i/srate;
+						g_spouts = [];
+						sk.onChangeTime({ dt: 1.0/srate });
 
-				//var curtime = (out_l.length*frame)/srate;
-				for(var i = 0; i<out_l.length; i+=skip){
-					//var time = curtime + i/srate;
-					g_spouts = [];
-					sk.onChangeTime({ dt: 1.0/srate });
-
-					var sum = 0.0;
-					g_spouts.forEach((spout) => { sum += spout; });
-					for(var j = 0; j<skip; j++){
-						out_l[i + j] = out_r[i + j] = sum/g_spouts.length;
+						var sum = 0.0;
+						g_spouts.forEach((spout) => { sum += spout; });
+						for(var j = 0; j<skip; j++){
+							out_l[i + j] = out_r[i + j] = sum/g_spouts.length;
+						}
 					}
+				}catch(e){
+					alert("Simulation error: "+e);
+					simEnd();
 				}
-				frame++;
-			}catch(e){
-				alert("Simulation error: "+e);
-				simEnd();
-			}
-		};
+			};
+
+			sk.onSimStart();
+			$("#btn-play").html('Stop <span style="color: hotpink; ">🔇</span>');
+			$("nav").css("background-color", "mistyrose");
+		}
 
 		var simEnd = () => {
 			is_play = false;
@@ -107,10 +114,7 @@
 		$("#btn-play").click(() => {
 			is_play ^= true;
 			if (is_play){
-				sk.onSimStart();
-				scproc.connect(ctx.destination);
-				$("#btn-play").html('Stop <span style="color: hotpink; ">🔇</span>');
-				$("nav").css("background-color", "mistyrose");
+				simStart();
 			}else{
 				simEnd();
 			}
