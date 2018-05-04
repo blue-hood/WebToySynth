@@ -67,36 +67,51 @@
 
 		var ctx;
 		var scproc;
+		var loadman;
 		window.AudioContext = window.AudioContext||window.webkitAudioContext;
 		var simStart = () => {
+			var rate = 0;
+			var skip = 1;
+			var stdrate = 0;
+
 			ctx = new AudioContext();
-			scproc = ctx.createScriptProcessor();
+			scproc = ctx.createScriptProcessor(0, 0, 1);
 			scproc.connect(ctx.destination);
 
 			scproc.onaudioprocess = (e) => {
 				try{
-					var out_l = e.outputBuffer.getChannelData(0);
-					var out_r = e.outputBuffer.getChannelData(1);
-					var skip = 2;
-					var srate = e.outputBuffer.sampleRate/skip;
-
+					var out = e.outputBuffer.getChannelData(0);
+					stdrate = e.outputBuffer.sampleRate;
+					var srate = stdrate/skip;
+					var dt = 1.0/srate;
 					//var curtime = (out_l.length*frame)/srate;
-					for(var i = 0; i<out_l.length; i+=skip){
+					for(var i = 0; i<out.length; i+=skip){
 						//var time = curtime + i/srate;
 						g_spouts = [];
-						sk.onChangeTime({ dt: 1.0/srate });
+						sk.onChangeTime({ dt: dt });
 
 						var sum = 0.0;
 						g_spouts.forEach((spout) => { sum += spout; });
 						for(var j = 0; j<skip; j++){
-							out_l[i + j] = out_r[i + j] = sum/g_spouts.length;
+							out[i + j] = sum/g_spouts.length;
 						}
 					}
+					rate += out.length;
 				}catch(e){
 					alert("Simulation error: "+e);
 					simEnd();
 				}
 			};
+
+			loadman = setInterval(() => {
+				/*if (rate/stdrate<0.5){
+					skip++;
+				}else{
+					skip = Math.max(skip - 1, 1);
+				}*/
+				skip += rate/stdrate<0.5;
+				rate = 0;
+			}, 1000);
 
 			sk.onSimStart();
 			$("#btn-play").html('Stop <span style="color: hotpink; ">🔇</span>');
@@ -107,6 +122,8 @@
 			is_play = false;
 			scproc.disconnect(ctx.destination);
 			sk.onSimEnd();
+			ctx.close();
+			clearInterval(loadman);
 			$("#btn-play").html('Play <span style="color: hotpink; ">🔊</span>');
 			$("nav").css("background-color", "white");
 		};
@@ -144,6 +161,32 @@
 			a.href = URL.createObjectURL(new Blob([JSON.stringify(file)], {type: "text/plain"}));
 			a.click();
 		});
+
+		$(window).on("keydown", (e) => {
+			if (e.key=="F5"){
+				$("#btn-play").click();
+				e.preventDefault();
+			}else if (e.key=="o" && e.ctrlKey){
+				$("#btn-load").click();
+				e.preventDefault();
+			}else if (e.key=="s" && e.ctrlKey){
+				$("#btn-save").click();
+				e.preventDefault();
+			}
+		});
+
+		var url_param = new URLSearchParams(location.search);
+		if (url_param.has("src")){
+			var src = url_param.get("src");
+			$.get(src, {}, (data) => {
+				var lut = sk.import(data.sketch);
+				edit.import(data.ui, lut);
+				$("#filename").val(src);
+			}, "json")
+			.fail(() => {
+				alert("Couldn't load the Sketch file: "+src+". ");
+			});
+		}
 
 		$(window).on("beforeunload", (e) => {
 			return true;

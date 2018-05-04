@@ -654,7 +654,7 @@ var ctx = this._canvas.getContext('2d');
 };
 
 var UpperSaturator = class extends Component{
-	get In(){ return {in_: 0, uplim: 1}; }
+	get In(){ return {in_1: 0, in_2: 1}; }
 	get Out(){ return {sat: 0, }; }
 
 	constructor(){
@@ -664,13 +664,13 @@ var UpperSaturator = class extends Component{
 
 	onChangeIn(){
 		super.onChangeIn();
-		this.outs[this.Out.sat].latch = Math.min(this.ins[this.In.in_].val, this.ins[this.In.uplim].val);
+		this.outs[this.Out.sat].latch = Math.min(this.ins[this.In.in_1].val, this.ins[this.In.in_2].val);
 		return this.update();
 	}
 };
 
 var LowerSaturator = class extends Component{
-	get In(){ return {in_: 0, lowlim: 1}; }
+	get In(){ return {in_1: 0, in_2: 1}; }
 	get Out(){ return {sat: 0, }; }
 
 	constructor(){
@@ -680,7 +680,7 @@ var LowerSaturator = class extends Component{
 
 	onChangeIn(){
 		super.onChangeIn();
-		this.outs[this.Out.sat].latch = Math.max(this.ins[this.In.in_].val, this.ins[this.In.lowlim].val);
+		this.outs[this.Out.sat].latch = Math.max(this.ins[this.In.in_1].val, this.ins[this.In.in_2].val);
 		return this.update();
 	}
 };

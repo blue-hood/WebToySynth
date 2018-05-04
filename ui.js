@@ -31,7 +31,7 @@ var Editor = class{
 			this.appendUiComponent(uicom);
 		}
 
-		var listbox = $('<select style="width: 96px; overflow-y: hidden; margin-bottom: 1ex; "></select>');
+		var listbox = $('<select style="overflow-y: hidden; margin-bottom: 1ex; "></select>');
 		coms.forEach((class_, i) => {
 			var option = $('<option style="cursor: pointer; "></option>');
 			option.dblclick((e) => {
