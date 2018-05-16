@@ -1,76 +1,3 @@
-var Custom = class extends Component{
-	constructor(){
-		super();
-
-		this.phase = 0.0;
-		this._sk = null;
-	}
-
-	set sketch(value){
-		this._sk = value;
-
-		this._sk.upInterface();
-		this.initPort(this._sk.int_ins.length, this._sk.int_outs.length);
-	}
-
-	update(){
-		if (this._sk){
-			var outs = this.outs;
-			this._sk.int_outs.forEach((int_out, i) => {
-				outs[i].latch = int_out.val;
-			});
-		}
-		super.update();
-	}
-
-	onSimStart(){
-		if (this._sk){
-			this._sk.onSimStart();
-		}
-		this.update();
-	}
-
-	onChangeIn(){
-		super.onChangeIn();
-		if (this._sk){
-			var ins = this.ins;
-			var chins = [];
-			this._sk.int_ins.forEach((int_in, i) => {
-				if (int_in.val!=ins[i].val){
-					int_in.val = ins[i].val;
-					chins.push(int_in);
-				}
-			});
-
-			var chcoms = [];
-			chins.forEach((in_) => {
-				chcoms.push(in_.com);
-			});
-			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });
-
-			chcoms.forEach((chcom) => {
-				chcom.onChangeIn();
-			});
-		}
-		this.update();
-	}
-
-	onChangeTime(e){
-		super.onChangeTime(e);
-		if (this._sk){
-			this._sk.onChangeTime(e);
-		}
-		this.update();
-	}
-
-	onSimEnd(){
-		if (this._sk){
-			this._sk.onSimEnd();
-		}
-		this.update();
-	}
-}
-
 var Speaker = class extends Component{
 	get In(){ return {sound: 0, }; }
 	get Out(){ return {thru: 0, }; }
@@ -96,21 +23,33 @@ var Input = class extends Component{
 		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
 		this.ui_class = UiInput;
 		this._val = 0.0;
-		this._i = 0;
+		//this._i = 0;
 	}
 
 	onChangeTime(e){
 		super.onChangeTime(e);
-		if (this._i++%65536==0){
+		/*if (this._i++%65536==0){
 			this.outs[this.Out.value].latch = 0.0;
 			this.update();
-		}
+		}*/
 		this.outs[this.Out.value].latch = this._val;
 		return this.update();
 	}
 
 	set value(value){
 		this._val = value;
+	}
+
+	export(){
+		var ex = super.export();
+		ex.value = this._val;
+		return ex;
+	}
+
+	import(im){
+		var lut = super.import(im);
+		this._val = im.value;
+		return lut;
 	}
 };
 
@@ -146,8 +85,9 @@ var UiInput = class extends UiComponent{
 	}
 
 	import(im){
-		super.import(im);
+		var lut = super.import(im);
 		this.value = im.value;
+		return lut;
 	}
 };
 
@@ -320,6 +260,7 @@ var Integrator = class extends Component{
 	}
 
 	onSimStart(){
+		super.onSimStart();
 		this._int = 0.0;
 	}
 
@@ -342,6 +283,7 @@ var Differentiator = class extends Component{
 	}
 
 	onSimStart(){
+		super.onSimStart();
 		this._prev = 0.0;
 	}
 
@@ -641,10 +583,11 @@ var ctx = this._canvas.getContext('2d');
 	}
 
 	import(im){
-		super.import(im);
+		var lut = super.import(im);
 		this.mode = im.mode;
 		this.trig = im.trig;
 		this.skip = im.skip;
+		return lut;
 	}
 
 	dispose(){
@@ -681,6 +624,203 @@ var LowerSaturator = class extends Component{
 	onChangeIn(){
 		super.onChangeIn();
 		this.outs[this.Out.sat].latch = Math.max(this.ins[this.In.in_1].val, this.ins[this.In.in_2].val);
+		return this.update();
+	}
+};
+
+var Meter = class extends Component{
+	get In(){ return {in_: 0}; }
+	get Out(){ return {thru: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+		this.ui_class = UiMeter;
+		this.val = 0.0;
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.val = this.ins[this.In.in_].val;
+		this.outs[this.Out.thru].latch = this.val;
+		return this.update();
+	}
+};
+
+var UiMeter = class extends UiComponent{
+	constructor(com, uisk){
+		super(com, uisk);
+		this._jqdisplay = $('<input style="width: 112px; text-align: inherit; " disabled>');
+	}
+
+	initDom(){
+		super.initDom();
+		var column = $('<td colspan="2" style="text-align: center; "></td>');
+		column.append(this._jqdisplay);
+		this.jqobj.append($('<tr></tr>').append(column));
+
+		this._timer = setInterval(() => {
+			this._jqdisplay.val(this.com.val);
+		}, 16);
+	}
+
+	dispose(){
+		clearInterval(this._timer);
+		super.dispose();
+	}
+};
+
+var Subtractor = class extends Component{
+	get In(){ return {in_1: 0, in_2: 1}; }
+	get Out(){ return {sub: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.outs[this.Out.sub].latch = this.ins[this.In.in_1].val-this.ins[this.In.in_2].val;
+		return this.update();
+	}
+};
+
+var Divider = class extends Component{
+	get In(){ return {in_1: 0, in_2: 1}; }
+	get Out(){ return {div: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.outs[this.Out.div].latch = this.ins[this.In.in_1].val/this.ins[this.In.in_2].val;
+		return this.update();
+	}
+};
+
+var Custom = class extends Component{
+	get In(){ return this._ins; }
+	get Out(){ return this._outs; }
+
+	constructor(){
+		super();
+
+		this.ui_class = UiCustom;
+		this._sk = null;
+		this._ins = {};
+		this._outs = {};
+	}
+
+	set sketch(value){
+		this._sk = value;
+
+		this._sk.upInterface();
+		this.initPort(this._sk.int_ins.length, this._sk.int_outs.length);
+
+		this._sk.int_ins.forEach((int_in, i) => {
+			this._ins[int_in.int] = i;
+		});
+		this._sk.int_outs.forEach((int_out, i) => {
+			this._outs[int_out.int] = i;
+		});
+	}
+
+	update(){
+		if (this._sk){
+			var outs = this.outs;
+			this._sk.int_outs.forEach((int_out, i) => {
+				outs[i].latch = int_out.val;
+			});
+		}
+		var chcoms = super.update();
+		//console.log(chcoms);
+		return chcoms;
+	}
+
+	onSimStart(){
+		super.onSimStart();
+		if (this._sk){
+			this._sk.onSimStart();
+		}
+		//return this.update();
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		if (this._sk){
+			var ins = this.ins;
+			var chins = [];
+			this._sk.int_ins.forEach((int_in, i) => {
+				if (int_in.val!=ins[i].val){
+					int_in.val = ins[i].val;
+					chins.push(int_in);
+				}
+			});
+
+			var chcoms = [];
+			chins.forEach((in_) => {
+				chcoms.push(in_.com);
+			});
+			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });
+
+			chcoms.forEach((chcom) => {
+				chcom.onChangeIn();
+			});
+		}
+		return this.update();
+	}
+
+	onChangeTime(e){
+		super.onChangeTime(e);
+		if (this._sk){
+			this._sk.onChangeTime(e);
+		}
+		return this.update();
+	}
+
+	onSimEnd(){
+		super.onSimEnd();
+		if (this._sk){
+			this._sk.onSimEnd();
+		}
+		//return this.update();
+	}
+
+	export(){
+		var ex = super.export();
+		ex.sketch = this._sk.export();
+		return ex;
+	}
+
+	import(im){
+		var sketch = new Sketch();
+		sketch.import(im.sketch);
+		this.sketch = sketch;
+		var lut = super.import(im);
+		return lut;
+	}
+
+}
+
+var UiCustom = class extends UiComponent{
+};
+
+var Repeater = class extends Component{
+	get In(){ return {in_: 0}; }
+	get Out(){ return {thru: 0, }; }
+
+	constructor(){
+		super();
+		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
+	}
+
+	onChangeIn(){
+		super.onChangeIn();
+		this.outs[this.Out.thru].latch = this.ins[this.In.in_].val;
 		return this.update();
 	}
 };
