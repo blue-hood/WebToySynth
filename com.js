@@ -767,9 +767,11 @@ var Custom = class extends Component{
 			});
 			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });
 
-			chcoms.forEach((chcom) => {
-				chcom.onChangeIn();
-			});
+	                while(chcoms.length){
+	                        chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });
+	                        var com = chcoms.shift();
+	                        Array.prototype.push.apply(chcoms, com.onChangeIn());
+	                }
 		}
 		return this.update();
 	}
