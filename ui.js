@@ -43,13 +43,13 @@ var Editor = class{
 		listbox.attr("size", coms.length);
 		this._jqside.append(listbox);
 
-		var jqaddbtn = $('<br><button style="width: 100%; ">Add ＋</button>');
+		var jqaddbtn = $('<br><button style="width: 100%; ">追加 ＋</button>');
 		jqaddbtn.click((e) => {
 			add();
 		});
 		this._jqside.append(jqaddbtn);
 
-		var jqviewbtn = $('<br><button style="width: 100%; ">Document 📄</button>');
+		var jqviewbtn = $('<br><button style="width: 100%; ">ドキュメント 📄</button>');
 		jqviewbtn.click((e) => {
 			window.open("doc/"+listbox.val()+"/");
 		});
@@ -71,7 +71,7 @@ var Editor = class{
                         this.appendUiComponent(uicom);
 		}
 
-		var jqlibbtn = $('<br><button style="width: 100%; margin-top: 2ex; ">Library 📔</button>');
+		var jqlibbtn = $('<br><button style="width: 100%; margin-top: 2ex; ">ライブラリー 📔</button>');
 		jqlibbtn.click((e) => {
                         var input = document.createElement("input");
                         input.type= "file";
