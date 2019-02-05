@@ -1,0 +1,6 @@
+[submodule "html/leader-line"]
+	path = html/leader-line
+	url = https://github.com/anseki/leader-line
+[submodule "html/UUID.js"]
+	path = html/UUID.js
+	url = https://github.com/LiosK/UUID.js
