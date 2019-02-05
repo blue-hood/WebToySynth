@@ -1,12 +1,12 @@
-<html lang="en">
+<html lang="ja">
 	<head>
 		<meta charset="utf-8">
 
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:site" content="@bluehood_admin" />
 		<meta property="og:title" content="Troopa 👀" />
-		<meta property="og:description" content="The Web Toy Synthesizer. " />
-		<meta property="og:image" content="https://twiverse.net/etc/troopa/eyes.png" />
+		<meta property="og:description" content="Web 上で作るおもちゃシンセサイザー。" />
+		<!--<meta property="og:image" content="https://twiverse.net/etc/troopa/eyes.png" />-->
 
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118660329-1"></script>
@@ -112,7 +112,7 @@
 			}, 1000);
 
 			sk.onSimStart();
-			$("#btn-play").html('Stop <span style="color: hotpink; ">🔇</span>');
+			$("#btn-play").html('停止 <span style="color: hotpink; ">🔇</span>');
 			$("nav").css("background-color", "mistyrose");
 		}
 
@@ -122,7 +122,7 @@
 			sk.onSimEnd();
 			ctx.close();
 			clearInterval(loadman);
-			$("#btn-play").html('Play <span style="color: hotpink; ">🔊</span>');
+			$("#btn-play").html('実行 <span style="color: hotpink; ">🔊</span>');
 			$("nav").css("background-color", "white");
 		};
 
@@ -253,17 +253,17 @@ aside{
 	<body>
 		<nav>
 			<h1>Troopa</h1> <span style="font-size: large; ">👀</span>
-			<h2>: The Web Toy Synthesizer. </h2>
+			<h2>: Web おもちゃシンセサイザー。</h2>
 			<span style="margin-left: 1em; ">
-				<button id="btn-play">Play <span style="color: hotpink; ">🔊</span></button>
+				<button id="btn-play">実行 <span style="color: hotpink; ">🔊</span></button>
 				<span style="margin-left: 1em; ">
-					<button id="btn-load">Load 📂</button>
-					<button id="btn-save">Save 💾</button>
+					<button id="btn-load">開く 📂</button>
+					<button id="btn-save">保存 💾</button>
 					<input id="filename" value="sample.syn" style="width: 96px; " placeholder="filename.syn">
 				</span>
 				<span style="margin-left: 1em; font-size: small; ">
-					<a href="tutorial/" target="_blank"><button>Tutorial 🔰</button></a>
-					<a href="community/" target="_blank"><button>Examples 🌐</button></a>
+					<a href="tutorial/" target="_blank"><button>チュートリアル 🔰</button></a>
+					<a href="community/" target="_blank"><button>サンプル 🌐</button></a>
 					<!--<span style="margin-left: 0.5em; ">Zoom <select id="zoom">
 						<option value="0.5">50 %</option>
 						<option value="0.75">75 %</option>
@@ -273,9 +273,7 @@ aside{
 				</span>
 			</span>
 			<span style="float: right; margin-right: 2.5em; font-size: small; ">
-				α version
-				<!--<a href="help.html" target="_blank"><button>Help ❓</button></a>
-				<a target="_blank"><button>Feedback 👀</button></a>-->
+				for Google Chrome on PC　　α 版
 				<a href="about.html" target="_blank"><button>About ❓</button></a>
 			</span>
 		</nav>
