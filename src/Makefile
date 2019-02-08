@@ -1,4 +1,9 @@
-all:hello
+STD := c++17
 
-hello:
-	emcc -s WASM=1 -o ../html/hello/hello.html hello.c
+all: core
+
+clean:
+	rm ../html/core/*
+
+core:
+	emcc -std=$(STD) -s WASM=1 -o ../html/core/index.html core.cpp
