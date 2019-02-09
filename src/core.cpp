@@ -1,43 +1,9 @@
+#include "sketch.hpp"
+
 #include <iostream>
-#include <vector>
-#include <memory>
-#include <algorithm>
 
 using namespace std;
 //var g_spouts = [];
-
-class Component
-{
-};
-
-typedef shared_ptr<Component> Component_p;
-
-class Sketch
-{
-  public:
-	vector<Component_p> coms;
-	vector<int> intIns;
-	vector<int> intOuts;
-
-	void appendCom(Component_p com);
-	void removeCom(Component_p com);
-	void clearCom();
-};
-
-void Sketch::appendCom(Component_p com)
-{
-	this->coms.push_back(com);
-}
-
-void Sketch::removeCom(Component_p rm)
-{
-	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
-}
-
-void Sketch::clearCom()
-{
-	this->coms.clear();
-}
 
 int main()
 {
@@ -60,11 +26,6 @@ int main()
 
 /*
 
-	onSimStart(){
-		this.coms.forEach((com) => {
-			com.onSimStart();
-		});
-	}
 
 	onChangeTime(e){
 		var chcoms = [];
