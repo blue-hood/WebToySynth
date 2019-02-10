@@ -2,7 +2,7 @@
 Web おもちゃシンセサイザー。
 
 ## インストール
-1. Sub Module を使用しているため --recursive オプションを付けて clone します。
+1. --recursive オプションを付けて clone します。
 ```
 $ git clone --recursive https://github.com/blue-hood/troopa
 ```
