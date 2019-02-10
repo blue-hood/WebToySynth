@@ -2,7 +2,7 @@
 Web おもちゃシンセサイザー。
 https://troopa.bluehood.net/
 
-# 環境要件
+## 環境要件
 - Docker
 
 ## インストール
