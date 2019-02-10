@@ -2,6 +2,9 @@
 Web おもちゃシンセサイザー。
 https://troopa.bluehood.net/
 
+# 環境要件
+-Docker
+
 ## インストール
 1. --recursive オプションを付けて clone します。
 ```
