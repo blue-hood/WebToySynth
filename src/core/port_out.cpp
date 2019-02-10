@@ -1,5 +1,10 @@
 #include "port_out.hpp"
 
+void PortOut::initVal()
+{
+	this->latch = 0.0;
+	this->val = 0.0;
+}
 /*
 var PortOut = class{
 	constructor(){

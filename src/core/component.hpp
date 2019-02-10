@@ -11,11 +11,12 @@ typedef shared_ptr<PortOut> PortOut_p;
 
 class Component
 {
-    int loopCnt;
+  int loopCnt;
 
-  public:
-    vector<PortIn_p> ins;
-    vector<PortOut_p> outs;
+public:
+  vector<PortIn_p> ins;
+  vector<PortOut_p> outs;
 
-    Component();
+  Component();
+  void onSimStart();
 };

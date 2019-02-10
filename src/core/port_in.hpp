@@ -2,4 +2,8 @@
 
 class PortIn
 {
+  public:
+    double val;
+
+    void initVal();
 };

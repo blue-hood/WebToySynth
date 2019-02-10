@@ -1,4 +1,4 @@
-#include "component.cpp"
+#include "component.hpp"
 
 Component::Component() : loopCnt(0)
 {
@@ -7,6 +7,25 @@ Component::Component() : loopCnt(0)
 		this.id = UUID.generate();
     */
 }
+
+void Component::onSimStart()
+{
+	/*this.ins.forEach((in_) = > {
+		in_.initVal();
+	});
+	this.outs.forEach((out) = > {
+		out.initVal();
+	});*/
+	for (PortIn_p in_ : this->ins)
+	{
+		in_->initVal();
+	}
+	for (PortOut_p out : this->outs)
+	{
+		out->initVal();
+	}
+}
+
 /*
 var Component = class{
 
@@ -120,14 +139,6 @@ var Component = class{
 		});
 	}
 
-	onSimStart(){
-		this.ins.forEach((in_) => {
-			in_.initVal();
-		});
-		this.outs.forEach((out) => {
-			out.initVal();
-		});
-	}
 
 	onChangeIn(){
 		if (++this._loopcnt>=256){

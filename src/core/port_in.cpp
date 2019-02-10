@@ -1,5 +1,9 @@
-#include "port_in.cpp"
+#include "port_in.hpp"
 
+void PortIn::initVal()
+{
+	this->val = 0.0;
+}
 /*
 var PortIn = class{
 	constructor(){
@@ -8,10 +12,6 @@ var PortIn = class{
 		this.int = "";
 		this.id = UUID.generate();
 		this.initVal();
-	}
-
-	initVal(){
-		this.val = 0.0;
 	}
 
 	connect(src){
