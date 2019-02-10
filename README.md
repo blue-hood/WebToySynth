@@ -1,5 +1,6 @@
 # troopa 👀
 Web おもちゃシンセサイザー。
+https://troopa.bluehood.net/
 
 ## インストール
 1. --recursive オプションを付けて clone します。
