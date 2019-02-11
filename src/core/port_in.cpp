@@ -1,9 +1,10 @@
 #include "port_in.hpp"
 
-PortIn::PortIn() : com(Component_p(nullptr))
+typedef shared_ptr<PortIn> PortIn_p;
+
+PortIn::PortIn() : com(Component_p(nullptr)), src(PortOut_p(nullptr))
 {
 	/*
-	this.src = null;
 	this.int = "";
 	this.id = UUID.generate();
 	this.initVal();*/
@@ -13,21 +14,27 @@ void PortIn::initVal()
 {
 	this->val = 0.0;
 }
+
+void PortIn::connect(PortOut_p src)
+{
+	this->disconnect();
+	this->src = src;
+	src->tos.push_back(PortIn_p(this));
+}
+
+void PortIn::disconnect()
+{
+	if (this->src)
+	{
+		PortIn_p dis = PortIn_p(this);
+		this->src->tos.erase(remove_if(this->src->tos.begin(), this->src->tos.end(), [&](PortIn_p to) -> bool { return to == dis; }), this->src->tos.end());
+		this->src = PortOut_p(nullptr);
+	}
+}
+
 /*
 var PortIn = class{
-	connect(src){
-		this.disconnect();
-		this.src = src;
-		src.tos.push(this);
-	}
 
-	disconnect(){
-		if (this.src){
-			var dis = this;
-			this.src.tos = this.src.tos.filter((to) => { return to!=dis; });
-			this.src = null;
-		}
-	}
 
 	export(){
 		return {id: this.id, int: this.int, };
