@@ -4,20 +4,20 @@
 
 void Sketch::appendCom(Component_p com)
 {
-    this->coms.push_back(com);
+	this->coms.push_back(com);
 }
 
 void Sketch::removeCom(Component_p rm)
 {
-    this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
+	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
 }
 
 void Sketch::onSimStart() // 未確認
 {
-    for (Component_p com : this->coms)
-    {
-        com->onSimStart();
-    }
+	for (Component_p com : this->coms)
+	{
+		com->onSimStart();
+	}
 }
 
 /*
@@ -27,7 +27,7 @@ void Sketch::onSimStart() // 未確認
 			Array.prototype.push.apply(chcoms, com.onChangeTime(e));
 		});
 		while(chcoms.length){
-			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });
+			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });	// 重複を消している
 			var com = chcoms.shift();
 			Array.prototype.push.apply(chcoms, com.onChangeIn());
 		}

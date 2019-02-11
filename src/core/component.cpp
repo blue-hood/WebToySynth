@@ -32,47 +32,61 @@ void Component::removeIn(PortIn_p rm)
 	rm->com = Component_p(nullptr);
 }
 
+void Component::clearIn()
+{
+	this->ins.clear();
+}
+
+void Component::appendOut(PortOut_p out)
+{
+	this->outs.push_back(out);
+}
+
+void Component::removeOut(PortOut_p rm)
+{
+	this->outs.erase(remove_if(this->outs.begin(), this->outs.end(), [&](PortOut_p out) -> bool { return out == rm; }), this->outs.end());
+}
+
+void Component::clearOut()
+{
+	this->outs.clear();
+}
+
+void Component::initPort(int in_n, int out_n)
+{
+	this->clearIn();
+	for (int i = 0; i < in_n; i++)
+	{
+		this->appendIn(PortIn_p(new PortIn()));
+	}
+
+	this->clearOut();
+	for (int i = 0; i < out_n; i++)
+	{
+		this->appendOut(PortOut_p(new PortOut()));
+	}
+}
+
+vector<Component_p> Component::update()
+{
+	vector<PortIn_p> chins;
+	for (PortOut_p out : this->outs)
+	{
+		vector<PortIn_p> partins = out->update();
+		chins.insert(chins.end(), partins.begin(), partins.end());
+	}
+
+	vector<Component_p> chcoms;
+	for (PortIn_p in_ : chins)
+	{
+		chcoms.push_back(in_->com);
+	}
+
+	return chcoms;
+}
+
 /*
 var Component = class{
-
-	clearIn(){
-		while(this.ins.length) this.removeIn(this.ins[0]);
-	}
-
-	appendOut(out){
-		this.outs.push(out);
-	}
-	removeOut(rm){
-		this.outs = this.outs.filter((out) => { return out!=rm; });
-	}
-	clearOut(){
-		while(this.outs.length) this.removeOut(this.outs[0]);
-	}
-
-	initPort(in_n, out_n){
-		this.clearIn();
-		for(var i = 0; i<in_n; i++){
-			this.appendIn(new PortIn());
-		}
-
-		this.clearOut();
-		for(var i = 0; i<out_n; i++){
-			this.appendOut(new PortOut());
-		}
-	}
-
-	update(){
-		var chins = [];
-		this.outs.forEach((out) => {
-			Array.prototype.push.apply(chins, out.update())
-		});
-
-		var chcoms = [];
-		chins.forEach((in_) => {
-			chcoms.push(in_.com);
-		});
-		return chcoms;
-	}
 
 	get int_ins(){
 		var int_ins = [];

@@ -1,23 +1,41 @@
 #include "port_out.hpp"
 
+PortOut::PortOut()
+{
+	/*
+		this.to_ids = [];
+		this.int = "";
+*/
+	this->initVal();
+}
+
 void PortOut::initVal()
 {
 	this->latch = 0.0;
 	this->val = 0.0;
 }
+
+vector<PortIn_p> PortOut::update()
+{
+	if (this->val != this->latch)
+	{
+		this->val = this->latch;
+
+		for (PortIn_p to : this->tos)
+		{
+			to->val = this->val;
+		}
+
+		return this->tos;
+	}
+	else
+	{
+		return vector<PortIn_p>();
+	}
+}
+
 /*
 var PortOut = class{
-	constructor(){
-		this.tos = [];
-		this.to_ids = [];
-		this.int = "";
-		this.initVal();
-	}
-
-	initVal(){
-		this._latch = 0.0;
-		this._val = 0.0;
-	}
 
 	get val(){
 		return this._val;
@@ -27,19 +45,6 @@ var PortOut = class{
 		this._latch = value;
 	}
 
-	update(){
-		if (this._val != this._latch){
-			this._val = this._latch;
-
-			this.tos.forEach((to) => {
-				to.val = this._val;
-			});
-
-			return this.tos;
-		}else{
-			return [];
-		}
-	}
 
 	disconnectAll(){
 		while(this.tos.length) this.tos[0].disconnect(this);
