@@ -1,19 +1,20 @@
 #include "port_in.hpp"
 
+PortIn::PortIn() : com(Component_p(nullptr))
+{
+	/*
+	this.src = null;
+	this.int = "";
+	this.id = UUID.generate();
+	this.initVal();*/
+}
+
 void PortIn::initVal()
 {
 	this->val = 0.0;
 }
 /*
 var PortIn = class{
-	constructor(){
-		this.com = null;
-		this.src = null;
-		this.int = "";
-		this.id = UUID.generate();
-		this.initVal();
-	}
-
 	connect(src){
 		this.disconnect();
 		this.src = src;

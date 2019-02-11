@@ -4,18 +4,12 @@ Component::Component() : loopCnt(0)
 {
 	/*
 		this.ui_class = UiComponent;
-		this.id = UUID.generate();
     */
+	uuid_generate(this->id);
 }
 
 void Component::onSimStart()
 {
-	/*this.ins.forEach((in_) = > {
-		in_.initVal();
-	});
-	this.outs.forEach((out) = > {
-		out.initVal();
-	});*/
 	for (PortIn_p in_ : this->ins)
 	{
 		in_->initVal();
@@ -26,17 +20,21 @@ void Component::onSimStart()
 	}
 }
 
+void Component::appendIn(PortIn_p in_)
+{
+	this->ins.push_back(in_);
+	in_->com = Component_p(this);
+}
+
+void Component::removeIn(PortIn_p rm)
+{
+	this->ins.erase(remove_if(this->ins.begin(), this->ins.end(), [&](PortIn_p in_) -> bool { return in_ == rm; }), this->ins.end());
+	rm->com = Component_p(nullptr);
+}
+
 /*
 var Component = class{
 
-	appendIn(in_){
-		this.ins.push(in_);
-		in_.com = this;
-	}
-	removeIn(rm){
-		this.ins = this.ins.filter((in_) => { return in_!=rm; });
-		rm.com = null;
-	}
 	clearIn(){
 		while(this.ins.length) this.removeIn(this.ins[0]);
 	}

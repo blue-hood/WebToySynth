@@ -1,10 +1,11 @@
 #pragma once
+class PortOut;
 
 class PortOut
 {
-    double val;
-    double latch;
+  double val;
+  double latch;
 
-  public:
-    void initVal();
+public:
+  void initVal();
 };

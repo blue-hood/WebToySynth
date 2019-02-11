@@ -1,4 +1,6 @@
 #pragma once
+class Sketch;
+
 #include "component.hpp"
 
 #include <vector>
@@ -9,13 +11,13 @@ typedef shared_ptr<Component> Component_p;
 
 class Sketch
 {
-  public:
-    vector<Component_p> coms;
-    vector<int> intIns;
-    vector<int> intOuts;
+public:
+  vector<Component_p> coms;
+  vector<int> intIns;
+  vector<int> intOuts;
 
-    void appendCom(Component_p com);
-    void removeCom(Component_p com);
-    void clearCom();
-    void onSimStart();
+  void appendCom(Component_p com);
+  void removeCom(Component_p com);
+  void clearCom();
+  void onSimStart();
 };
