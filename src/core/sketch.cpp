@@ -12,7 +12,7 @@ void Sketch::removeCom(Component_p rm)
 	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
 }
 
-void Sketch::onSimStart() // 未確認
+void Sketch::onSimStart()
 {
 	for (Component_p com : this->coms)
 	{

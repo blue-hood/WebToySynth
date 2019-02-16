@@ -2,12 +2,10 @@
 
 typedef shared_ptr<PortIn> PortIn_p;
 
-PortIn::PortIn() : com(Component_p(nullptr)), src(PortOut_p(nullptr))
+PortIn::PortIn() : com(Component_p(nullptr)), src(PortOut_p(nullptr)), int_("")
 {
-	/*
-	this.int = "";
-	this.id = UUID.generate();
-	this.initVal();*/
+	uuid_generate(this->id);
+	this->initVal();
 }
 
 void PortIn::initVal()
