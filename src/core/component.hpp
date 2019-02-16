@@ -5,6 +5,7 @@ class Component;
 #include "port_out.hpp"
 
 #include <vector>
+#include <deque>
 #include <memory>
 #include <uuid/uuid.h>
 using namespace std;
@@ -16,6 +17,8 @@ typedef shared_ptr<PortOut> PortOut_p;
 class Component
 {
   int loopcnt;
+
+  deque<Component_p> update();
 
 public:
   uuid_t id;
@@ -32,9 +35,8 @@ public:
   void removeOut(PortOut_p rm);
   void clearOut();
   void initPort(int in_n, int out_n);
-  vector<Component_p> update();
   void onSimStart();
-  vector<Component_p> onChangeIn();
-  vector<Component_p> onChangeTime();
+  deque<Component_p> onChangeIn();
+  deque<Component_p> onChangeTime(double dt);
   void onSimEnd();
 };

@@ -1,6 +1,7 @@
 #include "sketch.hpp"
 
 #include <algorithm>
+#include <deque>
 
 void Sketch::appendCom(Component_p com)
 {
@@ -12,6 +13,20 @@ void Sketch::removeCom(Component_p rm)
 	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
 }
 
+void Sketch::upInterface()
+{
+	this->int_ins.clear();
+	this->int_outs.clear();
+	for (Component_p com : this->coms)
+	{
+		vector<PortIn_p> int_ins = com->getIntIns();
+		this->int_ins.insert(this->int_ins.end(), int_ins.begin(), int_ins.end());
+
+		vector<PortOut_p> int_outs = com->getIntOuts();
+		this->int_outs.insert(this->int_outs.end(), int_outs.begin(), int_outs.end());
+	}
+}
+
 void Sketch::onSimStart()
 {
 	for (Component_p com : this->coms)
@@ -20,34 +35,38 @@ void Sketch::onSimStart()
 	}
 }
 
+void Sketch::onChangeTime(double dt)
+{
+	/*
+	chcoms.insert のときに重複を消すべき -> 未実装
+	*/
+	deque<Component_p> chcoms;
+
+	for (Component_p com : this->coms)
+	{
+		deque<Component_p> part_chcoms = com->onChangeTime(dt);
+		chcoms.insert(chcoms.end(), part_chcoms.begin(), part_chcoms.end());
+	}
+
+	while (!chcoms.empty())
+	{
+		Component_p com = chcoms.front();
+		chcoms.pop_front();
+
+		deque<Component_p> part_chcoms = com->onChangeIn();
+		chcoms.insert(chcoms.end(), part_chcoms.begin(), part_chcoms.end());
+	}
+}
+
+void Sketch::onSimEnd()
+{
+	for (Component_p com : this->coms)
+	{
+		com->onSimEnd();
+	}
+}
+
 /*
-	onChangeTime(e){
-		var chcoms = [];
-		this.coms.forEach((com) => {
-			Array.prototype.push.apply(chcoms, com.onChangeTime(e));
-		});
-		while(chcoms.length){
-			chcoms = chcoms.filter((chcom, i) => { return i==chcoms.indexOf(chcom); });	// 重複を消している
-			var com = chcoms.shift();
-			Array.prototype.push.apply(chcoms, com.onChangeIn());
-		}
-	}
-
-	onSimEnd(){
-		this.coms.forEach((com) => {
-			com.onSimEnd();
-		});
-	}
-
-	upInterface(){
-		this.int_ins = [];
-		this.int_outs = [];
-		this.coms.forEach((com) => {
-			this.int_ins = this.int_ins.concat(com.int_ins);
-			this.int_outs = this.int_outs.concat(com.int_outs);
-		});
-	}
-
 	export(){
 		var ex = {};
 		ex.coms = [];

@@ -42,7 +42,7 @@ vector<PortIn_p> PortOut::update()
 
 void PortOut::disconnectAll()
 {
-	while (this->tos.size())
+	while (!this->tos.empty())
 	{
 		this->tos[0]->disconnect();
 	}

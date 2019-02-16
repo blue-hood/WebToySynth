@@ -85,7 +85,7 @@ void Component::initPort(int in_n, int out_n)
 	}
 }
 
-vector<Component_p> Component::update()
+deque<Component_p> Component::update()
 {
 	vector<PortIn_p> chins;
 	for (PortOut_p out : this->outs)
@@ -94,7 +94,7 @@ vector<Component_p> Component::update()
 		chins.insert(chins.end(), partins.begin(), partins.end());
 	}
 
-	vector<Component_p> chcoms;
+	deque<Component_p> chcoms;
 	for (PortIn_p in_ : chins)
 	{
 		chcoms.push_back(in_->com);
@@ -115,19 +115,19 @@ void Component::onSimStart()
 	}
 }
 
-vector<Component_p> Component::onChangeIn()
+deque<Component_p> Component::onChangeIn()
 {
 	if (++this->loopcnt >= 256)
 	{
 		throw runtime_error("An infinite loop was occured. \nPlease insert \"Buffer\" to prevent it. ");
 	}
-	return vector<Component_p>();
+	return deque<Component_p>();
 }
 
-vector<Component_p> Component::onChangeTime()
+deque<Component_p> Component::onChangeTime(double dt)
 {
 	this->loopcnt = 0;
-	return vector<Component_p>();
+	return deque<Component_p>();
 }
 
 void Component::onSimEnd()
