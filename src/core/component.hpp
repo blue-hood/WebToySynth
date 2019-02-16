@@ -15,7 +15,7 @@ typedef shared_ptr<PortOut> PortOut_p;
 
 class Component
 {
-  int loopCnt;
+  int loopcnt;
 
 public:
   uuid_t id;
@@ -23,7 +23,8 @@ public:
   vector<PortOut_p> outs;
 
   Component();
-  void onSimStart();
+  vector<PortIn_p> getIntIns();
+  vector<PortOut_p> getIntOuts();
   void appendIn(PortIn_p in_);
   void removeIn(PortIn_p rm);
   void clearIn();
@@ -32,4 +33,8 @@ public:
   void clearOut();
   void initPort(int in_n, int out_n);
   vector<Component_p> update();
+  void onSimStart();
+  vector<Component_p> onChangeIn();
+  vector<Component_p> onChangeTime();
+  void onSimEnd();
 };

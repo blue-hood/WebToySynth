@@ -1,6 +1,8 @@
 #include "component.hpp"
 
-Component::Component() : loopCnt(0)
+#include <stdexcept>
+
+Component::Component() : loopcnt(0)
 {
 	/*
 		this.ui_class = UiComponent;
@@ -8,16 +10,32 @@ Component::Component() : loopCnt(0)
 	uuid_generate(this->id);
 }
 
-void Component::onSimStart()
+vector<PortIn_p> Component::getIntIns()
 {
+	vector<PortIn_p> int_ins;
+
 	for (PortIn_p in_ : this->ins)
 	{
-		in_->initVal();
+		if (in_->int_ != "")
+		{
+			int_ins.push_back(in_);
+		}
 	}
+	return int_ins;
+}
+
+vector<PortOut_p> Component::getIntOuts()
+{
+	vector<PortOut_p> int_outs;
+
 	for (PortOut_p out : this->outs)
 	{
-		out->initVal();
+		if (out->int_ != "")
+		{
+			int_outs.push_back(out);
+		}
 	}
+	return int_outs;
 }
 
 void Component::appendIn(PortIn_p in_)
@@ -85,26 +103,39 @@ vector<Component_p> Component::update()
 	return chcoms;
 }
 
+void Component::onSimStart()
+{
+	for (PortIn_p in_ : this->ins)
+	{
+		in_->initVal();
+	}
+	for (PortOut_p out : this->outs)
+	{
+		out->initVal();
+	}
+}
+
+vector<Component_p> Component::onChangeIn()
+{
+	if (++this->loopcnt >= 256)
+	{
+		throw runtime_error("An infinite loop was occured. \nPlease insert \"Buffer\" to prevent it. ");
+	}
+	return vector<Component_p>();
+}
+
+vector<Component_p> Component::onChangeTime()
+{
+	this->loopcnt = 0;
+	return vector<Component_p>();
+}
+
+void Component::onSimEnd()
+{
+}
+
 /*
 var Component = class{
-
-	get int_ins(){
-		var int_ins = [];
-
-		this.ins.forEach((in_) => {
-			if (in_.int!="") int_ins.push(in_);
-		});
-		return int_ins;
-	}
-
-	get int_outs(){
-		var int_outs = [];
-
-		this.outs.forEach((out) => {
-			if (out.int!="") int_outs.push(out);
-		});
-		return int_outs;
-	}
 
 	export(){
 		var ex = {};
@@ -152,17 +183,6 @@ var Component = class{
 	}
 
 
-	onChangeIn(){
-		if (++this._loopcnt>=256){
-			throw "An infinite loop was occured. \nPlease insert \"Buffer\" to prevent it. ";
-		}
-		return [];
-	}
-	onChangeTime(){
-		this._loopcnt = 0;
-		return [];
-	}
-	onSimEnd(){}
 };
 
 */
