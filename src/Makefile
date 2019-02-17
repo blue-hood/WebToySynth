@@ -1,11 +1,12 @@
 STD := c++17
 
-all: core
+all: ../html/core.html
+.PHONY: clean
 
 clean:
-	rm ../html/core/*
+	rm ../html/core.html
 
-core: core/*
-	emcc -std=$(STD) -s WASM=1 -o ../html/core/index.html \
-		core/core.cpp core/sketch.cpp core/component.cpp core/port_in.cpp core/port_out.cpp \
+../html/core.html:
+	emcc -std=$(STD) -s WASM=1 -o ../html/core.html core.cpp \
+		core/sketch.cpp core/component.cpp core/port_in.cpp core/port_out.cpp \
 		com/speaker.cpp
