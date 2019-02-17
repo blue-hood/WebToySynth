@@ -7,6 +7,7 @@ class Component;
 #include <vector>
 #include <deque>
 #include <memory>
+#include <string>
 #include <uuid/uuid.h>
 using namespace std;
 
@@ -18,6 +19,7 @@ class Component
 {
   int loopcnt;
 
+protected:
   deque<Component_p> update();
 
 public:
@@ -28,6 +30,8 @@ public:
   Component();
   vector<PortIn_p> getIntIns();
   vector<PortOut_p> getIntOuts();
+  virtual vector<string> getIn();
+  virtual vector<string> getOut();
   void appendIn(PortIn_p in_);
   void removeIn(PortIn_p rm);
   void clearIn();
@@ -37,6 +41,6 @@ public:
   void initPort(int in_n, int out_n);
   void onSimStart();
   deque<Component_p> onChangeIn();
-  deque<Component_p> onChangeTime(double dt);
+  virtual deque<Component_p> onChangeTime(double dt);
   void onSimEnd();
 };

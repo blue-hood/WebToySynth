@@ -38,6 +38,16 @@ vector<PortOut_p> Component::getIntOuts()
 	return int_outs;
 }
 
+vector<string> Component::getIn()
+{
+	return vector<string>();
+}
+
+vector<string> Component::getOut()
+{
+	return vector<string>();
+}
+
 void Component::appendIn(PortIn_p in_)
 {
 	this->ins.push_back(in_);
