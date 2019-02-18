@@ -3,28 +3,26 @@
 //get In(){ return {sound: 0, }; }
 //get Out(){ return {thru: 0, }; }
 
-vector<string> Speaker::getIn()
+map<string, int> Speaker::getIn()
 {
-    return vector<string>{"sound"};
+	return map<string, int>{{"sound", 0}};
 }
 
-vector<string> Speaker::getOut()
+map<string, int> Speaker::getOut()
 {
-    return vector<string>();
+	return map<string, int>{{"thru", 0}};
 }
 
 Speaker::Speaker() : Component()
 {
-    this->initPort(this->getIn().size(), this->getOut().size());
+	this->initPort(this->getIn().size(), this->getOut().size());
 }
 
 deque<Component_p> Speaker::onChangeTime(double dt)
 {
-    Component::onChangeTime(dt);
-    /*
-    g_spouts.push(this.outs[this.Out.thru].latch = this.ins[this.In.sound].val);
-    */
-    return this->update();
+	Component::onChangeTime(dt);
+	g_spout = this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
+	return this->update();
 }
 
 /*

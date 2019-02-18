@@ -6,6 +6,7 @@ class Component;
 
 #include <vector>
 #include <deque>
+#include <map>
 #include <memory>
 #include <string>
 #include <uuid/uuid.h>
@@ -21,6 +22,12 @@ class Component
 
 protected:
   deque<Component_p> update();
+  void appendIn(PortIn_p in_);
+  void removeIn(PortIn_p rm);
+  void clearIn();
+  void appendOut(PortOut_p out);
+  void removeOut(PortOut_p rm);
+  void clearOut();
 
 public:
   uuid_t id;
@@ -30,14 +37,8 @@ public:
   Component();
   vector<PortIn_p> getIntIns();
   vector<PortOut_p> getIntOuts();
-  virtual vector<string> getIn();
-  virtual vector<string> getOut();
-  void appendIn(PortIn_p in_);
-  void removeIn(PortIn_p rm);
-  void clearIn();
-  void appendOut(PortOut_p out);
-  void removeOut(PortOut_p rm);
-  void clearOut();
+  virtual map<string, int> getIn();
+  virtual map<string, int> getOut();
   void initPort(int in_n, int out_n);
   void onSimStart();
   deque<Component_p> onChangeIn();

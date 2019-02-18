@@ -10,9 +10,9 @@ double PortOut::getVal()
 	return this->val;
 }
 
-void PortOut::setLatch(double value)
+double PortOut::setLatch(double value)
 {
-	this->latch = value;
+	return this->latch = value;
 }
 
 void PortOut::initVal()

@@ -38,14 +38,14 @@ vector<PortOut_p> Component::getIntOuts()
 	return int_outs;
 }
 
-vector<string> Component::getIn()
+map<string, int> Component::getIn()
 {
-	return vector<string>();
+	return map<string, int>();
 }
 
-vector<string> Component::getOut()
+map<string, int> Component::getOut()
 {
-	return vector<string>();
+	return map<string, int>();
 }
 
 void Component::appendIn(PortIn_p in_)

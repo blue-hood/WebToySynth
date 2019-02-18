@@ -22,7 +22,7 @@ public:
 
   PortOut();
   double getVal();
-  void setLatch(double value);
+  double setLatch(double value);
   void initVal();
   vector<PortIn_p> update();
   void disconnectAll();
