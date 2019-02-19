@@ -1,12 +1,13 @@
 STD := c++17
 
-all: ../html/core.html
-.PHONY: clean ../html/core.html
+all: ../html/module.js
+.PHONY: clean ../html/module.js
 
 clean:
-	rm ../html/core.html
+	rm ../html/module.js
 
-../html/core.html:
-	emcc -std=$(STD) -s WASM=1 -o ../html/core.html index.cpp \
+../html/module.js:
+	emcc -O3 -s WASM=1 -std=$(STD) -s NO_EXIT_RUNTIME=1 -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+		-o ../html/module.js module.cpp \
 		core/core.cpp core/sketch.cpp core/component.cpp core/port_in.cpp core/port_out.cpp \
 		com/speaker.cpp
