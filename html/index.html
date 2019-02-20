@@ -1,283 +1,296 @@
 <html lang="ja">
-	<head>
-		<meta charset="utf-8">
 
-		<meta name="twitter:card" content="summary" />
-		<meta name="twitter:site" content="@bluehood_admin" />
-		<meta property="og:title" content="Troopa 👀" />
-		<meta property="og:description" content="Web 上で作るおもちゃシンセサイザー。" />
-		<!--<meta property="og:image" content="https://twiverse.net/etc/troopa/eyes.png" />-->
+<head>
+	<meta charset="utf-8">
 
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118660329-1"></script>
-		<script>
-		  window.dataLayer = window.dataLayer || [];
-		  function gtag(){dataLayer.push(arguments);}
-		  gtag('js', new Date());
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@bluehood_admin" />
+	<meta property="og:title" content="Troopa 👀" />
+	<meta property="og:description" content="Web 上で作るおもちゃシンセサイザー。" />
+	<!--<meta property="og:image" content="https://twiverse.net/etc/troopa/eyes.png" />-->
 
-		  gtag('config', 'UA-118660329-1');
-		</script>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118660329-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
 
-		<title>Troopa 👀</title>
+		gtag('config', 'UA-118660329-1');
+	</script>
 
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-		<script
-		  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-		  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-		  crossorigin="anonymous"></script>
-		<script src="UUID.js/src/uuid.js"></script>
-		<script src="leader-line/leader-line.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<title>Troopa 👀</title>
 
-		<script src="core.js"></script>
-		<script src="ui.js"></script>
-		<script src="com.js"></script>
-		<script>
-	$(() => {
-	var is_play = false;
-
-	//try{
-		var sk = new Sketch();
-		$("aside").css("margin-top", $("nav").outerHeight());
-		var edit = new Editor($("body"), $("aside"), [
-			Input, 
-			Keyboard, 
-			Sine, 
-			Square, 
-			Saw, 
-			Triangle, 
-			Noise, 
-			Buffer, 
-			Mixer, 
-			Subtractor, 
-			Amplifier, 
-			Divider, 
-			Integrator, 
-			Differentiator, 
-			UpperSaturator,
-			LowerSaturator,
-			Speaker, 
-			Meter, 
-			Scope, 
-			Repeater, 
-		], sk);
-
-		{
-			var file = JSON.parse('{"sketch":{"coms":[{"type":"Sine","id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","ins":[{"id":"38b207c5-38d3-4786-b866-72a7b91101fd","isint":false}],"outs":[{"tos":["e96b3686-b665-4b65-b08e-19a1c62eadb2"],"isint":false}]},{"type":"Speaker","id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","ins":[{"id":"e96b3686-b665-4b65-b08e-19a1c62eadb2","isint":false}],"outs":[{"tos":["77a8677b-2d63-4f1a-8736-839cdb104ca7"],"isint":false}]},{"type":"Input","id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","ins":[],"outs":[{"tos":["38b207c5-38d3-4786-b866-72a7b91101fd"],"isint":false}]},{"type":"Scope","id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","ins":[{"id":"77a8677b-2d63-4f1a-8736-839cdb104ca7","isint":false}],"outs":[{"tos":[],"isint":false}]}]},"ui":{"uicoms":[{"com_id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","x":339,"y":84,"name":"Sine","isrev":false},{"com_id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","x":542,"y":84,"name":"Speaker","isrev":false},{"com_id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","x":143,"y":84,"name":"Input","isrev":false,"value":440},{"com_id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","x":757.125,"y":84,"name":"Scope","isrev":false,"mode":1,"trig":0,"skip":1}]}}');
-			var lut = sk.import(file.sketch);
-			edit.import(file.ui, lut);
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+	 crossorigin="anonymous"></script>
+	<script src="UUID.js/src/uuid.js"></script>
+	<script src="leader-line/leader-line.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?11.3"></script>
+	<style>
+		img.emoji {
+			height: 1em;
+			width: 1em;
 		}
+	</style>
+	<script>$(() => { twemoji.parse(document.body); });</script>
 
-		var ctx;
-		var scproc;
-		var loadman;
-		window.AudioContext = window.AudioContext||window.webkitAudioContext;
-		var simStart = () => {
-			var rate = 0;
-			var skip = 1;
-			var stdrate = 1;
 
-			ctx = new AudioContext();
-			scproc = ctx.createScriptProcessor(0, 0, 1);
-			scproc.connect(ctx.destination);
+	<script src="core.js"></script>
+	<script src="ui.js"></script>
+	<script src="com.js"></script>
+	<script>
+		$(() => {
+			var is_play = false;
 
-			scproc.onaudioprocess = (e) => {
-				try{
-					var out = e.outputBuffer.getChannelData(0);
-					stdrate = e.outputBuffer.sampleRate;
-					var srate = stdrate/skip;
-					var dt = 1.0/srate;
-					//var curtime = (out_l.length*frame)/srate;
-					for(var i = 0; i<out.length; i+=skip){
-						//var time = curtime + i/srate;
-						g_spouts = [];
-						sk.onChangeTime({ dt: dt });
+			//try{
+			var sk = new Sketch();
+			$("aside").css("margin-top", $("nav").outerHeight());
+			var edit = new Editor($("body"), $("aside"), [
+				Input,
+				Keyboard,
+				Sine,
+				Square,
+				Saw,
+				Triangle,
+				Noise,
+				Buffer,
+				Mixer,
+				Subtractor,
+				Amplifier,
+				Divider,
+				Integrator,
+				Differentiator,
+				UpperSaturator,
+				LowerSaturator,
+				Speaker,
+				Meter,
+				Scope,
+				Repeater,
+			], sk);
 
-						var sum = 0.0;
-						g_spouts.forEach((spout) => { sum += spout; });
-						for(var j = 0; j<skip; j++){
-							out[i + j] = sum/g_spouts.length;
+			{
+				var file = JSON.parse('{"sketch":{"coms":[{"type":"Sine","id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","ins":[{"id":"38b207c5-38d3-4786-b866-72a7b91101fd","isint":false}],"outs":[{"tos":["e96b3686-b665-4b65-b08e-19a1c62eadb2"],"isint":false}]},{"type":"Speaker","id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","ins":[{"id":"e96b3686-b665-4b65-b08e-19a1c62eadb2","isint":false}],"outs":[{"tos":["77a8677b-2d63-4f1a-8736-839cdb104ca7"],"isint":false}]},{"type":"Input","id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","ins":[],"outs":[{"tos":["38b207c5-38d3-4786-b866-72a7b91101fd"],"isint":false}]},{"type":"Scope","id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","ins":[{"id":"77a8677b-2d63-4f1a-8736-839cdb104ca7","isint":false}],"outs":[{"tos":[],"isint":false}]}]},"ui":{"uicoms":[{"com_id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","x":339,"y":84,"name":"Sine","isrev":false},{"com_id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","x":542,"y":84,"name":"Speaker","isrev":false},{"com_id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","x":143,"y":84,"name":"Input","isrev":false,"value":440},{"com_id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","x":757.125,"y":84,"name":"Scope","isrev":false,"mode":1,"trig":0,"skip":1}]}}');
+				var lut = sk.import(file.sketch);
+				edit.import(file.ui, lut);
+			}
+
+			var ctx;
+			var scproc;
+			var loadman;
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			var simStart = () => {
+				var rate = 0;
+				var skip = 1;
+				var stdrate = 1;
+
+				ctx = new AudioContext();
+				scproc = ctx.createScriptProcessor(0, 0, 1);
+				scproc.connect(ctx.destination);
+
+				scproc.onaudioprocess = (e) => {
+					try {
+						var out = e.outputBuffer.getChannelData(0);
+						stdrate = e.outputBuffer.sampleRate;
+						var srate = stdrate / skip;
+						var dt = 1.0 / srate;
+						//var curtime = (out_l.length*frame)/srate;
+						for (var i = 0; i < out.length; i += skip) {
+							//var time = curtime + i/srate;
+							g_spouts = [];
+							sk.onChangeTime({ dt: dt });
+
+							var sum = 0.0;
+							g_spouts.forEach((spout) => { sum += spout; });
+							for (var j = 0; j < skip; j++) {
+								out[i + j] = sum / g_spouts.length;
+							}
 						}
+						rate += out.length;
+					} catch (e) {
+						alert("Simulation error: " + e);
+						simEnd();
 					}
-					rate += out.length;
-				}catch(e){
-					alert("Simulation error: "+e);
+				};
+
+				loadman = setInterval(() => {
+					skip += rate / stdrate < 0.75;
+					rate = 0;
+				}, 1000);
+
+				sk.onSimStart();
+				$("#btn-play").html('停止 <span style="color: hotpink; ">🔇</span>');
+				$("nav").css("background-color", "mistyrose");
+				twemoji.parse($("#btn-play")[0]);
+			}
+
+			var simEnd = () => {
+				is_play = false;
+				scproc.disconnect(ctx.destination);
+				sk.onSimEnd();
+				ctx.close();
+				clearInterval(loadman);
+				$("#btn-play").html('実行 <span style="color: hotpink; ">🔊</span>');
+				$("nav").css("background-color", "white");
+				twemoji.parse($("#btn-play")[0]);
+			};
+
+			$("#btn-play").click(() => {
+				is_play ^= true;
+				if (is_play) {
+					simStart();
+				} else {
 					simEnd();
 				}
-			};
-
-			loadman = setInterval(() => {
-				skip += rate/stdrate<0.75;
-				rate = 0;
-			}, 1000);
-
-			sk.onSimStart();
-			$("#btn-play").html('停止 <span style="color: hotpink; ">🔇</span>');
-			$("nav").css("background-color", "mistyrose");
-		}
-
-		var simEnd = () => {
-			is_play = false;
-			scproc.disconnect(ctx.destination);
-			sk.onSimEnd();
-			ctx.close();
-			clearInterval(loadman);
-			$("#btn-play").html('実行 <span style="color: hotpink; ">🔊</span>');
-			$("nav").css("background-color", "white");
-		};
-
-		$("#btn-play").click(() => {
-			is_play ^= true;
-			if (is_play){
-				simStart();
-			}else{
-				simEnd();
-			}
-		});
-
-		$("#btn-load").click(() => {
-			var input = document.createElement("input");
-			input.type= "file";
-			input.accept =".syn";
-			input.onchange = (e) => {
-				var reader = new FileReader();
-				reader.onloadend = (e) => {
-					var file = JSON.parse(e.target.result);
-					var lut = sk.import(file.sketch);
-					edit.import(file.ui, lut);
-				};
-				reader.readAsText(e.target.files[0]);
-				$("#filename").val(e.target.files[0].name);
-			};
-			input.click();
-		});
-
-		$("#btn-save").click(() => {
-			var file = { sketch: sk.export(), ui: edit.export() };
-			var a = document.createElement("a");
-			a.download = $("#filename").val();
-			a.href = URL.createObjectURL(new Blob([JSON.stringify(file)], {type: "text/plain"}));
-			a.click();
-		});
-
-		$(window).on("keydown", (e) => {
-			if (e.key=="F5"){
-				$("#btn-play").click();
-				e.preventDefault();
-			}else if (e.key=="o" && e.ctrlKey){
-				$("#btn-load").click();
-				e.preventDefault();
-			}else if (e.key=="s" && e.ctrlKey){
-				$("#btn-save").click();
-				e.preventDefault();
-			}
-		});
-
-		var url_param = new URLSearchParams(location.search);
-		if (url_param.has("src")){
-			var src = url_param.get("src");
-			$.get(src, {}, (data) => {
-				var lut = sk.import(data.sketch);
-				edit.import(data.ui, lut);
-				$("#filename").val(src);
-			}, "json")
-			.fail(() => {
-				alert("Couldn't load the Sketch file: "+src+". ");
 			});
+
+			$("#btn-load").click(() => {
+				var input = document.createElement("input");
+				input.type = "file";
+				input.accept = ".syn";
+				input.onchange = (e) => {
+					var reader = new FileReader();
+					reader.onloadend = (e) => {
+						var file = JSON.parse(e.target.result);
+						var lut = sk.import(file.sketch);
+						edit.import(file.ui, lut);
+					};
+					reader.readAsText(e.target.files[0]);
+					$("#filename").val(e.target.files[0].name);
+				};
+				input.click();
+			});
+
+			$("#btn-save").click(() => {
+				var file = { sketch: sk.export(), ui: edit.export() };
+				var a = document.createElement("a");
+				a.download = $("#filename").val();
+				a.href = URL.createObjectURL(new Blob([JSON.stringify(file)], { type: "text/plain" }));
+				a.click();
+			});
+
+			$(window).on("keydown", (e) => {
+				if (e.key == "F5") {
+					$("#btn-play").click();
+					e.preventDefault();
+				} else if (e.key == "o" && e.ctrlKey) {
+					$("#btn-load").click();
+					e.preventDefault();
+				} else if (e.key == "s" && e.ctrlKey) {
+					$("#btn-save").click();
+					e.preventDefault();
+				}
+			});
+
+			var url_param = new URLSearchParams(location.search);
+			if (url_param.has("src")) {
+				var src = url_param.get("src");
+				$.get(src, {}, (data) => {
+					var lut = sk.import(data.sketch);
+					edit.import(data.ui, lut);
+					$("#filename").val(src);
+				}, "json")
+					.fail(() => {
+						alert("Couldn't load the Sketch file: " + src + ". ");
+					});
+			}
+
+			$(window).on("beforeunload", (e) => {
+				return true;
+			});
+			//}catch(e){
+			//	alert(e);
+			//}
+		});
+	</script>
+
+	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
+	<style>
+		body {
+			margin: 0;
+			position: relative;
+			background-color: whitesmoke;
+			user-select: none;
+			font-family: "Lato", sans-serif;
 		}
 
-		$(window).on("beforeunload", (e) => {
-			return true;
-		});
-	//}catch(e){
-	//	alert(e);
-	//}
-});
-		</script>
+		.leader-line {
+			z-index: 65535;
+		}
 
-		<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
-		<style>
-body{
-	margin: 0;
-	position: relative;
-	background-color: whitesmoke; 
-	user-select: none;
-	font-family: "Lato", sans-serif;
-}
+		nav {
+			width: 100%;
+			position: fixed;
+			background-color: white;
+			border-bottom: 1px solid lightgray;
+			z-index: 65538;
+			box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
+			padding: 0.5em 1em;
+		}
 
-.leader-line{
-	z-index: 65535;
-}
+		h1 {
+			display: inline;
+			font-size: medium;
+		}
 
-nav{
-	width: 100%;
-	position: fixed;
-	background-color: white;
-	border-bottom: 1px solid lightgray;
-	z-index: 65538;
-	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
-	padding: 0.5em 1em;
-}
+		h2 {
+			display: inline;
+			font-size: smaller;
+			font-weight: normal;
+		}
 
-h1{
-	display: inline;
-	font-size: medium;
-}
+		aside {
+			zoom: 100%;
+			position: fixed;
+			height: 100%;
+			background-color: whitesmoke;
+			z-index: 65537;
+			border-right: 1px solid lightgray;
+			box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
+			padding: 0.5em;
+			font-size: small;
+		}
 
-h2{
-	display: inline;
-	font-size: smaller;
-	font-weight: normal;
-}
+		.inport {
+			cursor: alias;
+		}
 
-aside{
-	zoom: 100%;
-	position: fixed;
-	height: 100%;
-	background-color: whitesmoke;
-	z-index: 65537;
-	border-right: 1px solid lightgray;
-	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
-	padding: 0.5em;
-	font-size: small;
-}
+		.outport {
+			cursor: e-resize;
+		}
+	</style>
+</head>
 
-.inport{
-	cursor: alias;
-}
-.outport{
-	cursor: e-resize;
-}
-		</style>
-	</head>
-	<body>
-		<nav>
-			<h1>Troopa</h1> <span style="font-size: large; ">👀</span>
-			<h2>: Web おもちゃシンセサイザー。</h2>
+<body>
+	<nav>
+		<h1>Troopa</h1> <span style="font-size: large; ">👀</span>
+		<h2>: Web おもちゃシンセサイザー。</h2>
+		<span style="margin-left: 1em; ">
+			<button id="btn-play">実行 <span style="color: hotpink; ">🔊</span></button>
 			<span style="margin-left: 1em; ">
-				<button id="btn-play">実行 <span style="color: hotpink; ">🔊</span></button>
-				<span style="margin-left: 1em; ">
-					<button id="btn-load">開く 📂</button>
-					<button id="btn-save">保存 💾</button>
-					<input id="filename" value="sample.syn" style="width: 96px; " placeholder="filename.syn">
-				</span>
-				<span style="margin-left: 1em; font-size: small; ">
-					<a href="tutorial/" target="_blank"><button>チュートリアル 🔰</button></a>
-					<a href="community/" target="_blank"><button>サンプル 🌐</button></a>
-					<!--<span style="margin-left: 0.5em; ">Zoom <select id="zoom">
+				<button id="btn-load">開く 📂</button>
+				<button id="btn-save">保存 💾</button>
+				<input id="filename" value="sample.syn" style="width: 96px; " placeholder="filename.syn">
+			</span>
+			<span style="margin-left: 1em; font-size: small; ">
+				<a href="tutorial/" target="_blank"><button>チュートリアル 🔰</button></a>
+				<a href="community/" target="_blank"><button>サンプル 🌐</button></a>
+				<!--<span style="margin-left: 0.5em; ">Zoom <select id="zoom">
 						<option value="0.5">50 %</option>
 						<option value="0.75">75 %</option>
 						<option value="1.0" selected>100 %</option>
 						<option value="1.5">150 %</option>
 					</select></span>-->
-				</span>
 			</span>
-			<span style="float: right; margin-right: 2.5em; font-size: small; ">
-				for Google Chrome on PC　　α 版
-				<a href="about.html" target="_blank"><button>About ❓</button></a>
-			</span>
-		</nav>
-		<aside>
-		</aside>
-	</body>
+		</span>
+		<span style="float: right; margin-right: 2.5em; font-size: small; ">
+			for Google Chrome on PC　　α 版
+			<a href="about.html" target="_blank"><button>About ❓</button></a>
+		</span>
+	</nav>
+	<aside>
+	</aside>
+</body>
+
 </html>
