@@ -21,7 +21,8 @@ Speaker::Speaker() : Component()
 deque<Component_p> Speaker::onChangeTime(double dt)
 {
 	Component::onChangeTime(dt);
-	g_spout = this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
+	g_spout += this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
+	g_spcount++;
 	return this->update();
 }
 

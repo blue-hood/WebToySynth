@@ -6,3 +6,6 @@
 #include "port_out.hpp"
 
 extern double g_spout;
+extern int g_spcount;
+
+extern Sketch g_sketch;
