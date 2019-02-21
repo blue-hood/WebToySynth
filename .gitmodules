@@ -4,3 +4,6 @@
 [submodule "html/UUID.js"]
 	path = html/UUID.js
 	url = https://github.com/LiosK/UUID.js
+[submodule "src/cereal"]
+	path = src/cereal
+	url = https://github.com/USCiLab/cereal

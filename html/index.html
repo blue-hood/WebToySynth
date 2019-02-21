@@ -105,17 +105,23 @@
 				scproc.connect(ctx.destination);
 
 				scproc.onaudioprocess = (e) => {
+					var out = e.outputBuffer.getChannelData(0);
+					var bufferPtr = Module._malloc(Float32Array.BYTES_PER_ELEMENT * out.length);
 					try {
-						var out = e.outputBuffer.getChannelData(0);
 						var dt = 1.0 / e.outputBuffer.sampleRate;
-
-						var error = Module.ccall('onAudioProcess', 'number', ['number', 'number'], [dt, out.length]);
-						if (error) {
-							throw error;
+						var errorCode = Module.ccall('onAudioProcess', 'number', ['number', 'number', 'number'], [dt, bufferPtr, out.length]);
+						if (errorCode) {
+							throw errorCode;	// ここでエラーコードをメッセージ変換する。
 						}
+						var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
+						buffer.forEach((data, i) => {
+							out[i] = data;
+						});
 					} catch (e) {
-						alert("Simulation error: " + e);
-						simEnd();
+						alert(e);
+						Module.ccall('onSimEnd', null, null, null);
+					} finally {
+						Module._free(bufferPtr);
 					}
 				};
 
@@ -128,7 +134,7 @@
 			var simEnd = () => {
 				is_play = false;
 				scproc.disconnect(ctx.destination);
-				sk.onSimEnd();
+				Module.ccall('onSimEnd', null, null, null);
 				ctx.close();
 				$("#btn-play").html('実行 <span style="color: hotpink; ">🔊</span>');
 				$("nav").css("background-color", "white");

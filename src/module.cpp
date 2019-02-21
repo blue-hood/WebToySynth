@@ -1,8 +1,7 @@
 #include "core/core.hpp"
 #include "com/com.hpp"
 
-#include <stdio.h>
-#include <stdexcept>
+#include <exception>
 #include <emscripten/emscripten.h>
 
 using namespace std;
@@ -19,7 +18,7 @@ extern "C"
         g_sketch.onSimStart();
     }
 
-    EMSCRIPTEN_KEEPALIVE int onAudioProcess(double dt, int length)
+    EMSCRIPTEN_KEEPALIVE int onAudioProcess(double dt, float *buffer, int length)
     {
         // スキップフレームは未実装。
         try
@@ -30,7 +29,7 @@ extern "C"
                 g_spcount = 0;
                 g_sketch.onChangeTime(dt);
 
-                /* out[i] = */ g_spout / g_spcount;
+                buffer[i] = g_spout / g_spcount;
             }
         }
         catch (exception &e)
@@ -39,5 +38,10 @@ extern "C"
         }
 
         return 0;
+    }
+
+    EMSCRIPTEN_KEEPALIVE void onSimEnd()
+    {
+        g_sketch.onSimEnd();
     }
 }
