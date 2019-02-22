@@ -1,7 +1,7 @@
 #pragma once
 class Speaker;
 
-#include "../core/core.hpp"
+#include <core/core.hpp>
 
 class Speaker : public Component
 {
