@@ -7,6 +7,8 @@ class Sketch;
 
 #include <vector>
 #include <memory>
+#include <cereal/cereal.hpp>
+
 using namespace std;
 
 typedef shared_ptr<Component> Component_p;
@@ -27,4 +29,11 @@ public:
   void onSimStart();
   void onChangeTime(double dt);
   void onSimEnd();
+
+  int val;
+  template <class Archive>
+  void serialize(Archive &archive)
+  {
+    archive(CEREAL_NVP(val));
+  }
 };

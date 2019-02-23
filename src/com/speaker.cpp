@@ -1,8 +1,5 @@
 #include "speaker.hpp"
 
-//get In(){ return {sound: 0, }; }
-//get Out(){ return {thru: 0, }; }
-
 map<string, int> Speaker::getIn()
 {
 	return map<string, int>{{"sound", 0}};
