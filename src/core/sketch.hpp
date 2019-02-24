@@ -31,10 +31,17 @@ public:
   void onSimStart();
   void onChangeTime(double dt);
   void onSimEnd();
+  void exportExtends();
 
   template <class Archive>
   void serialize(Archive &archive)
   {
+    vector<Component> coms;
+
+    for (Component_p com : this->coms)
+    {
+      coms.push_back(*com);
+    }
     archive(CEREAL_NVP(coms));
   }
 };

@@ -48,6 +48,20 @@ void PortOut::disconnectAll()
 	}
 }
 
+vector<string> PortOut::exportTos()
+{
+	vector<string> tos;
+	char uuid_str[37];
+
+	for (PortIn_p to : this->tos)
+	{
+		uuid_unparse_lower(to->id, uuid_str);
+		tos.push_back(string(uuid_str));
+	}
+
+	return tos;
+}
+
 /*
 var PortOut = class{
 

@@ -31,6 +31,9 @@ public:
   template <class Archive>
   void serialize(Archive &archive)
   {
-    archive(CEREAL_NVP(id), cereal::make_nvp("int", int_));
+    char uuid_str[37];
+
+    uuid_unparse_lower(this->id, uuid_str);
+    archive(cereal::make_nvp("id", string(uuid_str)), cereal::make_nvp("int", int_));
   }
 };

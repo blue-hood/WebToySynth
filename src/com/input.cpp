@@ -1,50 +1,45 @@
-#include "speaker.hpp"
+#include "input.hpp"
 
-map<string, int> Speaker::getIn()
+map<string, int> Input::getIn()
 {
-	return map<string, int>{{"sound", 0}};
+	return map<string, int>();
 }
 
-map<string, int> Speaker::getOut()
+map<string, int> Input::getOut()
 {
-	return map<string, int>{{"thru", 0}};
+	return map<string, int>{{"value", 0}};
 }
 
-Speaker::Speaker() : Component()
+double Input::setValue(double value)
+{
+	this->val = value;
+	return value;
+}
+
+Input::Input() : Component()
 {
 	this->initPort(this->getIn().size(), this->getOut().size());
 	this->com_name = string(__FUNCTION__);
+	this->val = 0.0;
 }
 
-deque<Component_p> Speaker::onChangeTime(double dt)
+deque<Component_p> Input::onChangeTime(double dt)
 {
 	Component::onChangeTime(dt);
-	g_spout += this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
-	g_spcount++;
+	this->outs[this->getOut()["value"]]->setLatch(this->val);
 	return this->update();
+}
+
+void Input::exportExtends()
+{
+	this->extends = map<string, string>{{"value", to_string(this->val)}};
 }
 
 /*
 var Input = class extends Component{
-	get In(){ return {}; }
-	get Out(){ return {value: 0, }; }
 
 	constructor(){
-		super();
-		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
 		this.ui_class = UiInput;
-		this._val = 0.0;
-		//this._i = 0;
-	}
-
-	onChangeTime(e){
-		super.onChangeTime(e);
-		this.outs[this.Out.value].latch = this._val;
-		return this.update();
-	}
-
-	set value(value){
-		this._val = value;
 	}
 
 	export(){

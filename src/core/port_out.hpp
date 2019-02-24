@@ -19,6 +19,8 @@ class PortOut
   double val;
   double latch;
 
+  vector<string> exportTos();
+
 public:
   string int_;
   vector<PortIn_p> tos;
@@ -34,13 +36,7 @@ public:
   template <class Archive>
   void serialize(Archive &archive)
   {
-    vector<uuid_t> tos;
-
-    /*for (PortIn_p to : this->tos)
-    {
-      tos.push_back(to->id);
-    }*/
-
+    vector<string> tos = this->exportTos();
     archive(CEREAL_NVP(tos), cereal::make_nvp("int", int_));
   }
 };

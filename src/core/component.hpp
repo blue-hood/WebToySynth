@@ -13,6 +13,7 @@ class Component;
 #include <cereal/cereal.hpp>
 #include <cereal/types/vector.hpp>
 #include <cereal/types/memory.hpp>
+#include <cereal/types/map.hpp>
 
 using namespace std;
 
@@ -25,7 +26,11 @@ class Component
   int loopcnt;
 
 protected:
-  deque<Component_p> update();
+  string com_name;
+  map<string, string> extends;
+
+  deque<Component_p>
+  update();
   void appendIn(PortIn_p in_);
   void removeIn(PortIn_p rm);
   void clearIn();
@@ -48,10 +53,27 @@ public:
   deque<Component_p> onChangeIn();
   virtual deque<Component_p> onChangeTime(double dt);
   void onSimEnd();
+  virtual void exportExtends();
 
   template <class Archive>
   void serialize(Archive &archive)
   {
-    archive(cereal::make_nvp("type", "test"), CEREAL_NVP(id), CEREAL_NVP(ins), CEREAL_NVP(outs));
+    char uuid_str[37];
+    vector<PortIn> ins;
+    vector<PortOut> outs;
+
+    uuid_unparse_lower(this->id, uuid_str);
+    for (PortIn_p in_ : this->ins)
+    {
+      ins.push_back(*in_);
+    }
+    for (PortOut_p out : this->outs)
+    {
+      outs.push_back(*out);
+    }
+
+    archive(cereal::make_nvp("type", com_name), cereal::make_nvp("id", string(uuid_str)), CEREAL_NVP(ins), CEREAL_NVP(outs), CEREAL_NVP(extends));
+
+    this->extends = map<string, string>();
   }
 };

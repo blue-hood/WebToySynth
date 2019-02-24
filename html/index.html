@@ -168,7 +168,13 @@
 			});
 
 			$("#btn-save").click(() => {
-				var file = { sketch: sk.export(), ui: edit.export() };
+				var sketch_data = Module.ccall('export_', 'string', null, null);
+				console.log(sketch_data);
+				return;
+				var file = {
+					sketch: sketch_data,
+					ui: edit.export()
+				};
 				var a = document.createElement("a");
 				a.download = $("#filename").val();
 				a.href = URL.createObjectURL(new Blob([JSON.stringify(file)], { type: "text/plain" }));

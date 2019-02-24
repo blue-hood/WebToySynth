@@ -66,6 +66,14 @@ void Sketch::onSimEnd()
 	}
 }
 
+void Sketch::exportExtends()
+{
+	for (Component_p com : this->coms)
+	{
+		com->exportExtends();
+	}
+}
+
 /*
 	export(){
 		var ex = {};
