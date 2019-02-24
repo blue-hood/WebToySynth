@@ -13,8 +13,8 @@ clean:
 ../html/module.js: module.cpp core/core.o com/speaker.o
 	emcc $(OPTIONS) -o ../html/module.js module.cpp core/core.o com/speaker.o
 
-core/core.o: core/core.cpp core/sketch.cpp core/component.cpp core/port_in.cpp core/port_out.cpp
+core/core.o: core/*.?pp
 	emcc $(OPTIONS) -o core/core.o core/core.cpp core/sketch.cpp core/component.cpp core/port_in.cpp core/port_out.cpp
 
-com/speaker.o: com/speaker.cpp
+com/speaker.o: com/speaker.?pp
 	emcc $(OPTIONS) -o com/speaker.o com/speaker.cpp

@@ -51,13 +51,6 @@ void PortOut::disconnectAll()
 /*
 var PortOut = class{
 
-	export(){
-		var tos = [];
-		this.tos.forEach((to) => {
-			tos.push(to.id);
-		});
-		return {tos: tos, int: this.int, };
-	}
 
 	import(im){
 		this.to_ids = im.tos;

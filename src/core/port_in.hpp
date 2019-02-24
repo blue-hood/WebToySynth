@@ -7,6 +7,8 @@ class PortIn;
 #include <string>
 #include <memory>
 #include <uuid/uuid.h>
+#include <cereal/cereal.hpp>
+
 using namespace std;
 
 typedef shared_ptr<Component> Component_p;
@@ -25,4 +27,10 @@ public:
   void initVal();
   void connect(PortOut_p src);
   void disconnect();
+
+  template <class Archive>
+  void serialize(Archive &archive)
+  {
+    archive(CEREAL_NVP(id), cereal::make_nvp("int", int_));
+  }
 };

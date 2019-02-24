@@ -147,23 +147,6 @@ void Component::onSimEnd()
 /*
 var Component = class{
 
-	export(){
-		var ex = {};
-		ex.type = this.constructor.name;
-		ex.id = this.id;
-
-		ex.ins = [];
-		this.ins.forEach((in_) => {
-			ex.ins.push(in_.export());
-		});
-
-		ex.outs = [];
-		this.outs.forEach((out) => {
-			ex.outs.push(out.export());
-		});
-
-		return ex;
-	}
 
 	import(im){
 		var lut = [];

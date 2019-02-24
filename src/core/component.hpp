@@ -10,6 +10,10 @@ class Component;
 #include <memory>
 #include <string>
 #include <uuid/uuid.h>
+#include <cereal/cereal.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/memory.hpp>
+
 using namespace std;
 
 typedef shared_ptr<Component> Component_p;
@@ -44,4 +48,10 @@ public:
   deque<Component_p> onChangeIn();
   virtual deque<Component_p> onChangeTime(double dt);
   void onSimEnd();
+
+  template <class Archive>
+  void serialize(Archive &archive)
+  {
+    archive(cereal::make_nvp("type", "test"), CEREAL_NVP(id), CEREAL_NVP(ins), CEREAL_NVP(outs));
+  }
 };

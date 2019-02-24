@@ -6,6 +6,10 @@ class PortOut;
 #include <string>
 #include <vector>
 #include <memory>
+#include <uuid/uuid.h>
+#include <cereal/cereal.hpp>
+#include <cereal/types/vector.hpp>
+
 using namespace std;
 
 typedef shared_ptr<PortIn> PortIn_p;
@@ -26,4 +30,17 @@ public:
   void initVal();
   vector<PortIn_p> update();
   void disconnectAll();
+
+  template <class Archive>
+  void serialize(Archive &archive)
+  {
+    vector<uuid_t> tos;
+
+    /*for (PortIn_p to : this->tos)
+    {
+      tos.push_back(to->id);
+    }*/
+
+    archive(CEREAL_NVP(tos), cereal::make_nvp("int", int_));
+  }
 };

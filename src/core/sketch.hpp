@@ -8,6 +8,8 @@ class Sketch;
 #include <vector>
 #include <memory>
 #include <cereal/cereal.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/memory.hpp>
 
 using namespace std;
 
@@ -30,10 +32,9 @@ public:
   void onChangeTime(double dt);
   void onSimEnd();
 
-  int val;
   template <class Archive>
   void serialize(Archive &archive)
   {
-    archive(CEREAL_NVP(val));
+    archive(CEREAL_NVP(coms));
   }
 };

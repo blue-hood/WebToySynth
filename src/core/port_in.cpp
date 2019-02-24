@@ -32,12 +32,6 @@ void PortIn::disconnect()
 
 /*
 var PortIn = class{
-
-
-	export(){
-		return {id: this.id, int: this.int, };
-	}
-
 	import(im){
 		this.id = im.id;
 		this.int = im.int;
