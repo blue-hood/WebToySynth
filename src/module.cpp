@@ -21,6 +21,8 @@ extern "C"
 
 int main(int argc, char **argv)
 {
+    initCom();
+
     Component_p speaker1 = Component_p(new Speaker());
     g_sketch.appendCom(speaker1);
     Component_p input1 = Component_p(new Input());
@@ -32,6 +34,11 @@ int main(int argc, char **argv)
     sine1->ins[sine1->getIn()["freq"]]->connect(input1->outs[input1->getOut()["value"]]);
 
     static_cast<Input *>(input1.get())->setValue(440.0);
+
+    printf("speaker: %p\n", speaker1.get());
+    printf("input: %p\n", input1.get());
+    printf("sine: %p\n", sine1.get());
+
     return 0;
 }
 
@@ -53,7 +60,8 @@ EMSCRIPTEN_KEEPALIVE int onAudioProcess(double dt, float *buffer, int length)
             g_spcount = 0;
             g_sketch.onChangeTime(dt);
 
-            buffer[i] = g_spout / g_spcount;
+            printf("%p\n", buffer);
+            *(buffer++) = g_spcount != 0 ? g_spout / g_spcount : 0.0;
         }
     }
     catch (exception &e)
