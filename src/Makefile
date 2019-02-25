@@ -10,7 +10,7 @@ clean:
 	-rm core/core.o
 	-rm com/*.o
 
-../html/module.js: module.cpp core/core.o com/speaker.o com/input.o
+../html/module.js: module.cpp core/core.o com/speaker.o com/input.o com/sine.o
 	emcc $(OPTIONS) -o ../html/module.js module.cpp core/core.o com/*.o
 
 core/core.o: core/*.?pp
@@ -21,3 +21,6 @@ com/speaker.o: com/speaker.?pp
 
 com/input.o: com/input.?pp
 	emcc $(OPTIONS) -o com/input.o com/input.cpp
+
+com/sine.o: com/sine.?pp
+	emcc $(OPTIONS) -o com/sine.o com/sine.cpp

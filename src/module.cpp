@@ -25,8 +25,13 @@ int main(int argc, char **argv)
     g_sketch.appendCom(speaker1);
     Component_p input1 = Component_p(new Input());
     g_sketch.appendCom(input1);
+    Component_p sine1 = Component_p(new Sine());
+    g_sketch.appendCom(sine1);
 
-    speaker1->ins[speaker1->getIn()["sound"]]->connect(input1->outs[input1->getOut()["value"]]);
+    speaker1->ins[speaker1->getIn()["sound"]]->connect(sine1->outs[sine1->getOut()["sine"]]);
+    sine1->ins[sine1->getIn()["freq"]]->connect(input1->outs[input1->getOut()["value"]]);
+
+    static_cast<Input *>(input1.get())->setValue(440.0);
     return 0;
 }
 
