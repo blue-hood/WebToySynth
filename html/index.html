@@ -116,7 +116,6 @@
 						var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
 						buffer.forEach((data, i) => {
 							out[i] = data;
-							console.log(data);
 						});
 					} catch (e) {
 						simEnd();

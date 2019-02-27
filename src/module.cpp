@@ -55,7 +55,7 @@ EMSCRIPTEN_KEEPALIVE int onAudioProcess(double dt, float *buffer, int length)
             g_spout = 0.0;
             g_spcount = 0;
             g_sketch.onChangeTime(dt);
-            *(buffer++) = g_spcount != 0 ? g_spout / g_spcount : 0.0;
+            buffer[i] = g_spcount != 0 ? g_spout / g_spcount : 0.0;
         }
     }
     catch (exception &e)
