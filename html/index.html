@@ -101,17 +101,16 @@
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			var simStart = () => {
 				ctx = new AudioContext();
-				scproc = ctx.createScriptProcessor(0, 0, 1);
+				scproc = ctx.createScriptProcessor(2048, 0, 1);
 				scproc.connect(ctx.destination);
 
 				scproc.onaudioprocess = (e) => {
 					var out = e.outputBuffer.getChannelData(0);
-					var bufferPtr = Module._malloc(Float32Array.BYTES_PER_ELEMENT * out.length);
 					try {
 						var dt = 1.0 / e.outputBuffer.sampleRate;
-						var errorCode = Module.ccall('onAudioProcess', 'number', ['number', 'number', 'number'], [dt, bufferPtr, out.length]);
-						if (errorCode) {
-							throw errorCode;	// ここでエラーコードをメッセージ変換する。
+						var bufferPtr = Module.ccall('onAudioProcess', 'number', ['number'], [dt]);
+						if (!bufferPtr) {
+							throw "エラーが発生しました。";
 						}
 						var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
 						buffer.forEach((data, i) => {
@@ -121,8 +120,6 @@
 						simEnd();
 						alert(e);
 						throw e;
-					} finally {
-						Module._free(bufferPtr);
 					}
 				};
 
@@ -211,9 +208,12 @@
 			$(window).on("beforeunload", (e) => {
 				return true;
 			});
-
 		};
-		var Module = { postRun: postRun };
+		var Module = {
+			postRun: postRun, printErr: (stderr) => {
+				if (Module.calledRun) alert(stderr);
+			}
+		};
 
 		twemoji.parse(document.body);
 	</script>
