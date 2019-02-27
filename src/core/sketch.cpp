@@ -44,8 +44,7 @@ void Sketch::onChangeTime(double dt)
 
 	for (Component_p com : this->coms)
 	{
-		deque<Component_p> part_chcoms;
-		part_chcoms = com->onChangeTime(dt);
+		deque<Component_p> part_chcoms = com->onChangeTime(dt);
 		chcoms.insert(chcoms.end(), part_chcoms.begin(), part_chcoms.end());
 	}
 

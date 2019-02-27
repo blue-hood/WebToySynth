@@ -35,10 +35,6 @@ int main(int argc, char **argv)
 
     static_cast<Input *>(input1.get())->setValue(440.0);
 
-    printf("speaker: %p\n", speaker1.get());
-    printf("input: %p\n", input1.get());
-    printf("sine: %p\n", sine1.get());
-
     return 0;
 }
 
@@ -59,8 +55,6 @@ EMSCRIPTEN_KEEPALIVE int onAudioProcess(double dt, float *buffer, int length)
             g_spout = 0.0;
             g_spcount = 0;
             g_sketch.onChangeTime(dt);
-
-            printf("%p\n", buffer);
             *(buffer++) = g_spcount != 0 ? g_spout / g_spcount : 0.0;
         }
     }

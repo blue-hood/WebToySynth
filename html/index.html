@@ -107,7 +107,6 @@
 				scproc.onaudioprocess = (e) => {
 					var out = e.outputBuffer.getChannelData(0);
 					var bufferPtr = Module._malloc(Float32Array.BYTES_PER_ELEMENT * out.length);
-					console.log(bufferPtr.toString(16));
 					try {
 						var dt = 1.0 / e.outputBuffer.sampleRate;
 						var errorCode = Module.ccall('onAudioProcess', 'number', ['number', 'number', 'number'], [dt, bufferPtr, out.length]);
@@ -117,6 +116,7 @@
 						var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
 						buffer.forEach((data, i) => {
 							out[i] = data;
+							console.log(data);
 						});
 					} catch (e) {
 						simEnd();
