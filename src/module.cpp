@@ -23,11 +23,11 @@ int main(int argc, char **argv)
 {
     initCom();
 
-    Component_p speaker1 = Component_p(new Speaker());
+    Component_p speaker1 = Component_p(newCom("Speaker"));
     g_sketch.appendCom(speaker1);
-    Component_p input1 = Component_p(new Input());
+    Component_p input1 = Component_p(newCom("Input"));
     g_sketch.appendCom(input1);
-    Component_p sine1 = Component_p(new Sine());
+    Component_p sine1 = Component_p(newCom("Sine"));
     g_sketch.appendCom(sine1);
 
     speaker1->ins[speaker1->getIn()["sound"]]->connect(sine1->outs[sine1->getOut()["sine"]]);
@@ -58,6 +58,7 @@ EMSCRIPTEN_KEEPALIVE float *onAudioProcess(double dt)
     }
     catch (exception &e)
     {
+        cerr << e.what() << endl;
         return NULL;
     }
 
@@ -78,5 +79,6 @@ EMSCRIPTEN_KEEPALIVE const char *export_()
         cereal::JSONOutputArchive archive(stream);
         archive(cereal::make_nvp("sketch", g_sketch));
     }
+
     return stream.str().c_str();
 }

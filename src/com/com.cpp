@@ -11,11 +11,9 @@ static vector<Component *(*)(string)> g_new_com_funcs;
 #define registerComponent(Com)                                         \
     do                                                                 \
     {                                                                  \
-        Com com;                                                       \
-                                                                       \
-        g_com_names.push_back(#Com);                                   \
+        g_com_names.push_back(string(#Com));                           \
         g_new_com_funcs.push_back([](string com_name) -> Component * { \
-            return com_name == string(#Com) ? new Com : nullptr;       \
+            return com_name == string(#Com) ? new Com() : nullptr;     \
         });                                                            \
     } while (0)
 
