@@ -13,19 +13,19 @@ class Sketch;
 
 using namespace std;
 
-typedef shared_ptr<Component> Component_p;
+typedef unique_ptr<Component> Component_up;
 typedef shared_ptr<PortIn> PortIn_p;
 typedef shared_ptr<PortOut> PortOut_p;
 
 class Sketch
 {
 public:
-  vector<Component_p> coms;
+  vector<Component_up> coms;
   vector<PortIn_p> int_ins;
   vector<PortOut_p> int_outs;
 
-  void appendCom(Component_p com);
-  void removeCom(Component_p com);
+  void appendCom(Component *com);
+  void removeCom(Component_up &com);
   void clearCom();
   void upInterface();
   void onSimStart();
@@ -38,7 +38,7 @@ public:
   {
     vector<Component> coms;
 
-    for (Component_p com : this->coms)
+    for (Component_up &com : this->coms)
     {
       coms.push_back(*com);
     }

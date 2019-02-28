@@ -15,7 +15,7 @@ vector<PortIn_p> Component::getIntIns()
 {
 	vector<PortIn_p> int_ins;
 
-	for (PortIn_p in_ : this->ins)
+	for (PortIn_p &in_ : this->ins)
 	{
 		if (in_->int_ != "")
 		{
@@ -29,7 +29,7 @@ vector<PortOut_p> Component::getIntOuts()
 {
 	vector<PortOut_p> int_outs;
 
-	for (PortOut_p out : this->outs)
+	for (PortOut_p &out : this->outs)
 	{
 		if (out->int_ != "")
 		{
@@ -55,9 +55,9 @@ void Component::appendIn(PortIn_p in_)
 	in_->com = this;
 }
 
-void Component::removeIn(PortIn_p rm)
+void Component::removeIn(PortIn_p &rm)
 {
-	this->ins.erase(remove_if(this->ins.begin(), this->ins.end(), [&](PortIn_p in_) -> bool { return in_ == rm; }), this->ins.end());
+	this->ins.erase(remove_if(this->ins.begin(), this->ins.end(), [&](PortIn_p &in_) -> bool { return in_ == rm; }), this->ins.end());
 	rm->com = nullptr;
 }
 
@@ -71,9 +71,9 @@ void Component::appendOut(PortOut_p out)
 	this->outs.push_back(out);
 }
 
-void Component::removeOut(PortOut_p rm)
+void Component::removeOut(PortOut_p &rm)
 {
-	this->outs.erase(remove_if(this->outs.begin(), this->outs.end(), [&](PortOut_p out) -> bool { return out == rm; }), this->outs.end());
+	this->outs.erase(remove_if(this->outs.begin(), this->outs.end(), [&](PortOut_p &out) -> bool { return out == rm; }), this->outs.end());
 }
 
 void Component::clearOut()
@@ -106,11 +106,11 @@ void Component::update(deque<Component *> &chcoms)
 
 void Component::onSimStart()
 {
-	for (PortIn_p in_ : this->ins)
+	for (PortIn_p &in_ : this->ins)
 	{
 		in_->initVal();
 	}
-	for (PortOut_p out : this->outs)
+	for (PortOut_p &out : this->outs)
 	{
 		out->initVal();
 	}

@@ -3,21 +3,23 @@
 #include <algorithm>
 #include <deque>
 
-void Sketch::appendCom(Component_p com)
+// uuid を返す
+void Sketch::appendCom(Component *com)
 {
-	this->coms.push_back(com);
+	this->coms.push_back(Component_up(com));
 }
 
-void Sketch::removeCom(Component_p rm)
+// uuid で参照
+void Sketch::removeCom(Component_up &rm)
 {
-	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_p com) -> bool { return com == rm; }), this->coms.end());
+	this->coms.erase(remove_if(this->coms.begin(), this->coms.end(), [&](Component_up &com) -> bool { return com == rm; }), this->coms.end());
 }
 
 void Sketch::upInterface()
 {
 	this->int_ins.clear();
 	this->int_outs.clear();
-	for (Component_p com : this->coms)
+	for (Component_up &com : this->coms)
 	{
 		vector<PortIn_p> int_ins = com->getIntIns();
 		this->int_ins.insert(this->int_ins.end(), int_ins.begin(), int_ins.end());
@@ -29,7 +31,7 @@ void Sketch::upInterface()
 
 void Sketch::onSimStart()
 {
-	for (Component_p com : this->coms)
+	for (Component_up &com : this->coms)
 	{
 		com->onSimStart();
 	}
@@ -39,7 +41,7 @@ void Sketch::onChangeTime(double dt)
 {
 	deque<Component *> chcoms;
 
-	for (Component_p com : this->coms)
+	for (Component_up &com : this->coms)
 	{
 		com->onChangeTime(dt, chcoms);
 	}
@@ -53,7 +55,7 @@ void Sketch::onChangeTime(double dt)
 
 void Sketch::onSimEnd()
 {
-	for (Component_p com : this->coms)
+	for (Component_up &com : this->coms)
 	{
 		com->onSimEnd();
 	}
@@ -61,7 +63,7 @@ void Sketch::onSimEnd()
 
 void Sketch::exportExtends()
 {
-	for (Component_p com : this->coms)
+	for (Component_up &com : this->coms)
 	{
 		com->exportExtends();
 	}

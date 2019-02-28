@@ -11,7 +11,6 @@ class PortIn;
 
 using namespace std;
 
-typedef shared_ptr<Component> Component_p;
 typedef shared_ptr<PortOut> PortOut_p;
 
 class PortIn
@@ -25,7 +24,7 @@ public:
 
   PortIn();
   void initVal();
-  void connect(PortOut_p src);
+  void connect(PortOut_p &src);
   void disconnect();
 
   template <class Archive>

@@ -13,7 +13,7 @@ void PortIn::initVal()
 	this->val = 0.0;
 }
 
-void PortIn::connect(PortOut_p src)
+void PortIn::connect(PortOut_p &src)
 {
 	this->disconnect();
 	this->src = src;

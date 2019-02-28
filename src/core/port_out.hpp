@@ -14,7 +14,6 @@ class PortOut;
 
 using namespace std;
 
-typedef shared_ptr<Component> Component_p;
 typedef shared_ptr<PortIn> PortIn_p;
 
 class PortOut

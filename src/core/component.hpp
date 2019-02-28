@@ -17,7 +17,6 @@ class Component;
 
 using namespace std;
 
-typedef shared_ptr<Component> Component_p;
 typedef shared_ptr<PortIn> PortIn_p;
 typedef shared_ptr<PortOut> PortOut_p;
 
@@ -31,10 +30,10 @@ protected:
 
   void update(deque<Component *> &chcoms);
   void appendIn(PortIn_p in_);
-  void removeIn(PortIn_p rm);
+  void removeIn(PortIn_p &rm);
   void clearIn();
   void appendOut(PortOut_p out);
-  void removeOut(PortOut_p rm);
+  void removeOut(PortOut_p &rm);
   void clearOut();
 
 public:
