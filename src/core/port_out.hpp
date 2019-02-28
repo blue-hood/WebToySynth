@@ -26,7 +26,7 @@ class PortOut
 
 public:
   string int_;
-  vector<PortIn_p> tos;
+  vector<PortIn *> tos;
   vector<string> to_ids;
 
   PortOut();

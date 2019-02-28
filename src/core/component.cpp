@@ -52,13 +52,13 @@ map<string, int> Component::getOut()
 void Component::appendIn(PortIn_p in_)
 {
 	this->ins.push_back(in_);
-	in_->com = Component_p(this);
+	in_->com = this;
 }
 
 void Component::removeIn(PortIn_p rm)
 {
 	this->ins.erase(remove_if(this->ins.begin(), this->ins.end(), [&](PortIn_p in_) -> bool { return in_ == rm; }), this->ins.end());
-	rm->com = Component_p(nullptr);
+	rm->com = nullptr;
 }
 
 void Component::clearIn()

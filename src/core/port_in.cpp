@@ -2,7 +2,7 @@
 
 typedef shared_ptr<PortIn> PortIn_p;
 
-PortIn::PortIn() : com(Component_p(nullptr)), src(PortOut_p(nullptr)), int_("")
+PortIn::PortIn() : com(nullptr), src(PortOut_p(nullptr)), int_("")
 {
 	uuid_generate(this->id);
 	this->initVal();
@@ -17,15 +17,15 @@ void PortIn::connect(PortOut_p src)
 {
 	this->disconnect();
 	this->src = src;
-	src->tos.push_back(PortIn_p(this));
+	src->tos.push_back(this);
 }
 
 void PortIn::disconnect()
 {
 	if (this->src)
 	{
-		PortIn_p dis = PortIn_p(this);
-		this->src->tos.erase(remove_if(this->src->tos.begin(), this->src->tos.end(), [&](PortIn_p to) -> bool { return to == dis; }), this->src->tos.end());
+		PortIn *dis = this;
+		this->src->tos.erase(remove_if(this->src->tos.begin(), this->src->tos.end(), [&](PortIn *to) -> bool { return to == dis; }), this->src->tos.end());
 		this->src = PortOut_p(nullptr);
 	}
 }

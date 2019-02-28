@@ -19,7 +19,7 @@ class PortIn
 public:
   uuid_t id;
   double val;
-  Component_p com;
+  Component *com;
   PortOut_p src;
   string int_;
 

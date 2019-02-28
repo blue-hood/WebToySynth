@@ -27,10 +27,10 @@ void PortOut::update(deque<Component *> &chcoms)
 	{
 		this->val = this->latch;
 
-		for (PortIn_p to : this->tos)
+		for (PortIn *to : this->tos)
 		{
 			to->val = this->val;
-			chcoms.push_back(to->com.get()); // ここで重複を確認する
+			chcoms.push_back(to->com); // ここで重複を確認する
 		}
 	}
 }
@@ -48,7 +48,7 @@ vector<string> PortOut::exportTos()
 	vector<string> tos;
 	char uuid_str[37];
 
-	for (PortIn_p to : this->tos)
+	for (PortIn *to : this->tos)
 	{
 		uuid_unparse_lower(to->id, uuid_str);
 		tos.push_back(string(uuid_str));
