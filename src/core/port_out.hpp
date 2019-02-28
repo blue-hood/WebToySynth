@@ -1,10 +1,12 @@
 #pragma once
 class PortOut;
 
+#include "component.hpp"
 #include "port_in.hpp"
 
 #include <string>
 #include <vector>
+#include <deque>
 #include <memory>
 #include <uuid/uuid.h>
 #include <cereal/cereal.hpp>
@@ -12,6 +14,7 @@ class PortOut;
 
 using namespace std;
 
+typedef shared_ptr<Component> Component_p;
 typedef shared_ptr<PortIn> PortIn_p;
 
 class PortOut
@@ -30,7 +33,7 @@ public:
   double getVal();
   double setLatch(double value);
   void initVal();
-  vector<PortIn_p> update();
+  void update(deque<Component *> &chcoms);
   void disconnectAll();
 
   template <class Archive>

@@ -21,7 +21,7 @@ void PortOut::initVal()
 	this->val = 0.0;
 }
 
-vector<PortIn_p> PortOut::update()
+void PortOut::update(deque<Component *> &chcoms)
 {
 	if (this->val != this->latch)
 	{
@@ -30,13 +30,8 @@ vector<PortIn_p> PortOut::update()
 		for (PortIn_p to : this->tos)
 		{
 			to->val = this->val;
+			chcoms.push_back(to->com.get()); // ここで重複を確認する
 		}
-
-		return this->tos;
-	}
-	else
-	{
-		return vector<PortIn_p>();
 	}
 }
 

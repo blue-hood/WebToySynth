@@ -23,11 +23,11 @@ Input::Input() : Component()
 	this->val = 0.0;
 }
 
-deque<Component_p> Input::onChangeTime(double dt)
+void Input::onChangeTime(double dt, deque<Component *> &chcoms)
 {
-	Component::onChangeTime(dt);
+	Component::onChangeTime(dt, chcoms);
 	this->outs[this->getOut()["value"]]->setLatch(this->val);
-	return this->update();
+	this->update(chcoms);
 }
 
 void Input::exportExtends()

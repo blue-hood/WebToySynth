@@ -16,12 +16,12 @@ Speaker::Speaker() : Component()
 	this->com_name = string(__FUNCTION__);
 }
 
-deque<Component_p> Speaker::onChangeTime(double dt)
+void Speaker::onChangeTime(double dt, deque<Component *> &chcoms)
 {
-	Component::onChangeTime(dt);
+	Component::onChangeTime(dt, chcoms);
 	g_spout += this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
 	g_spcount++;
-	return this->update();
+	this->update(chcoms);
 }
 
 /*

@@ -19,12 +19,12 @@ Sine::Sine() : Component()
 	this->phase = 0.0;
 }
 
-deque<Component_p> Sine::onChangeTime(double dt)
+void Sine::onChangeTime(double dt, deque<Component *> &chcoms)
 {
-	Component::onChangeTime(dt);
+	Component::onChangeTime(dt, chcoms);
 	this->outs[this->getOut()["sine"]]->setLatch(sin(this->phase));
 	this->phase += this->ins[this->getIn()["freq"]]->val * dt * 2.0 * M_PI;
-	return this->update();
+	this->update(chcoms);
 }
 
 /*

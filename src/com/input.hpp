@@ -12,6 +12,6 @@ public:
   virtual map<string, int> getIn();
   virtual map<string, int> getOut();
   double setValue(double value);
-  virtual deque<Component_p> onChangeTime(double dt);
+  virtual void onChangeTime(double dt, deque<Component *> &chcoms);
   virtual void exportExtends();
 };

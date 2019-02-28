@@ -29,8 +29,7 @@ protected:
   string com_name;
   map<string, string> extends;
 
-  deque<Component_p>
-  update();
+  void update(deque<Component *> &chcoms);
   void appendIn(PortIn_p in_);
   void removeIn(PortIn_p rm);
   void clearIn();
@@ -50,8 +49,8 @@ public:
   virtual map<string, int> getOut();
   void initPort(int in_n, int out_n);
   void onSimStart();
-  deque<Component_p> onChangeIn();
-  virtual deque<Component_p> onChangeTime(double dt);
+  void onChangeIn(deque<Component *> &chcoms);
+  virtual void onChangeTime(double dt, deque<Component *> &chcoms);
   void onSimEnd();
   virtual void exportExtends();
 

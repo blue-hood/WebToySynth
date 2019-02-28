@@ -37,24 +37,17 @@ void Sketch::onSimStart()
 
 void Sketch::onChangeTime(double dt)
 {
-	/*
-	chcoms.insert のときに重複を消すべき -> 未実装
-	*/
-	deque<Component_p> chcoms;
+	deque<Component *> chcoms;
 
 	for (Component_p com : this->coms)
 	{
-		deque<Component_p> part_chcoms = com->onChangeTime(dt);
-		chcoms.insert(chcoms.end(), part_chcoms.begin(), part_chcoms.end());
+		com->onChangeTime(dt, chcoms);
 	}
 
 	while (!chcoms.empty())
 	{
-		Component_p com = chcoms.front();
+		chcoms.front()->onChangeIn(chcoms);
 		chcoms.pop_front();
-
-		deque<Component_p> part_chcoms = com->onChangeIn();
-		chcoms.insert(chcoms.end(), part_chcoms.begin(), part_chcoms.end());
 	}
 }
 
