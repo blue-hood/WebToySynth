@@ -2,5 +2,5 @@
 
 . ./config
 
-docker build ./ -t troopa
-docker run -d --name troopa -v `pwd`/html:/var/www/html -p ${PORT}:80 troopa
+docker build ./ -t webtoysynth
+docker run -d --name webtoysynth -v `pwd`/html:/var/www/html -p ${PORT}:80 webtoysynth
