@@ -1,5 +1,6 @@
 OPTIONS := -s WASM=1 -s NO_EXIT_RUNTIME=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=2 \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+		-s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=8 \
 		-O3 -std=c++17 -Wno-exceptions \
 		-I $(PWD) -I $(PWD)/cereal/include
 

@@ -1,5 +1,10 @@
 #include "sketch.hpp"
 
+#define PTHREAD_POOL_SIZE 8
+
+#include <exception>
+#include <stdexcept>
+#include <pthread.h>
 #include <algorithm>
 #include <deque>
 
@@ -37,19 +42,79 @@ void Sketch::onSimStart()
 	}
 }
 
+void *test(void *args)
+{
+	printf("thread\n");
+	//deque<Component *> *chcoms = new deque<Component *>(); // メモリリークに注意
+	//static_cast<Component *>(com)->onChangeIn(*chcoms);
+	//return chcoms;
+	return args;
+}
+
 void Sketch::onChangeTime(double dt)
 {
-	deque<Component *> chcoms;
+	vector<pthread_t> threads;
 
-	for (Component_up &com : this->coms)
+	try
 	{
-		com->onChangeTime(dt, chcoms);
+		deque<Component *> chcoms;
+
+		for (Component_up &com : this->coms)
+		{
+			com->onChangeTime(dt, chcoms);
+		}
+
+		int threadCount = 0;
+		while (!chcoms.empty())
+		{
+			for (int i = 1; i < PTHREAD_POOL_SIZE && !chcoms.empty(); i++)
+			{
+				Component *com = chcoms.front();
+				chcoms.pop_front();
+
+				pthread_t thread;
+
+				printf("create %d\n", ++threadCount);
+				if (pthread_create(
+						&thread, NULL,
+						test,
+						/*com*/ NULL))
+				{
+					throw runtime_error("スレッドを作成できません。");
+				};
+				threads.push_back(thread);
+			}
+
+			for (pthread_t thread : threads)
+			{
+				deque<Component *> *part_chcoms;
+
+				printf("join %d\n", --threadCount);
+				if (pthread_join(thread, reinterpret_cast<void **>(&part_chcoms)))
+				{
+					throw runtime_error("スレッドの待機に失敗しました。");
+				}
+				//for (Component *com : *part_chcoms)
+				//{
+				//	chcoms.push_back(com);
+				//}
+				//delete part_chcoms;
+			}
+			threads.clear();
+		}
 	}
-
-	while (!chcoms.empty())
+	catch (exception &e)
 	{
-		chcoms.front()->onChangeIn(chcoms);
-		chcoms.pop_front();
+		for (pthread_t &thread : threads)
+		{
+			deque<Component *> *part_chcoms;
+
+			if (!pthread_join(thread, (void **)&part_chcoms))
+			{
+				delete part_chcoms;
+			}
+		}
+		throw e;
 	}
 }
 
