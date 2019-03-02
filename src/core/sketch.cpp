@@ -1,5 +1,7 @@
 #include "sketch.hpp"
 
+#include <thread>
+#include <future>
 #include <algorithm>
 #include <deque>
 
@@ -40,6 +42,7 @@ void Sketch::onSimStart()
 void Sketch::onChangeTime(double dt)
 {
 	deque<Component *> chcoms;
+	vector<future<deque<Component *>>> futures;
 
 	for (Component_up &com : this->coms)
 	{
@@ -48,8 +51,29 @@ void Sketch::onChangeTime(double dt)
 
 	while (!chcoms.empty())
 	{
-		chcoms.front()->onChangeIn(chcoms);
-		chcoms.pop_front();
+		for (Component *com : chcoms)
+		{
+			printf("Push\n");
+			futures.push_back(
+				async(launch::async,
+					  [](Component *com) {
+						  deque<Component *> chcoms;
+						  com->onChangeIn(chcoms);
+						  return chcoms;
+					  },
+					  com));
+		}
+		chcoms.clear();
+
+		for (future<deque<Component *>> &future : futures)
+		{
+			printf("Wait\n");
+			for (Component *com : future.get())
+			{
+				chcoms.push_back(com);
+			}
+		}
+		futures.clear();
 	}
 }
 

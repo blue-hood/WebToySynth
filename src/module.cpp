@@ -37,7 +37,7 @@ int main(int argc, char **argv)
         g_sketch.appendCom(speaker1);
     }
 
-    for (int i = 1; i < 50 /*speakerの数*/; i++)
+    for (int i = 1; i < 1 /*speakerの数*/; i++)
     {
         Component *speaker2 = newCom("Speaker");
         g_sketch.appendCom(speaker2);
