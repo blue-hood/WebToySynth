@@ -1,13 +1,15 @@
 #include "speaker.hpp"
 
+#define IN_SOUND 0
 map<string, int> Speaker::getIn()
 {
-	return map<string, int>{{"sound", 0}};
+	return map<string, int>{{"sound", IN_SOUND}};
 }
 
+#define OUT_THRU 0
 map<string, int> Speaker::getOut()
 {
-	return map<string, int>{{"thru", 0}};
+	return map<string, int>{{"thru", OUT_THRU}};
 }
 
 Speaker::Speaker() : Component()
@@ -19,7 +21,8 @@ Speaker::Speaker() : Component()
 void Speaker::onChangeTime(double dt, deque<Component *> &chcoms)
 {
 	Component::onChangeTime(dt, chcoms);
-	g_spout += this->outs[this->getOut()["thru"]]->setLatch(this->ins[this->getIn()["sound"]]->val);
+	// マルチスレッドのとき排他制御すること
+	g_spout += this->outs[OUT_THRU]->setLatch(this->ins[IN_SOUND]->val);
 	g_spcount++;
 	this->update(chcoms);
 }

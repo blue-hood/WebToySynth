@@ -2,14 +2,16 @@
 
 #include <math.h>
 
+#define IN_FREQ 0
 map<string, int> Sine::getIn()
 {
-	return map<string, int>{{"freq", 0}};
+	return map<string, int>{{"freq", IN_FREQ}};
 }
 
+#define OUT_SINE 0
 map<string, int> Sine::getOut()
 {
-	return map<string, int>{{"sine", 0}};
+	return map<string, int>{{"sine", OUT_SINE}};
 }
 
 Sine::Sine() : Component()
@@ -22,8 +24,8 @@ Sine::Sine() : Component()
 void Sine::onChangeTime(double dt, deque<Component *> &chcoms)
 {
 	Component::onChangeTime(dt, chcoms);
-	this->outs[this->getOut()["sine"]]->setLatch(sin(this->phase));
-	this->phase += this->ins[this->getIn()["freq"]]->val * dt * 2.0 * M_PI;
+	this->outs[OUT_SINE]->setLatch(sin(this->phase));
+	this->phase += this->ins[IN_FREQ]->val * dt * 2.0 * M_PI;
 	this->update(chcoms);
 }
 
@@ -192,21 +194,6 @@ var UiKeyboard = class extends UiComponent{
 	}
 };
 
-var Amplifier = class extends Component{
-	get In(){ return {in_1: 0, in_2: 1}; }
-	get Out(){ return {amp: 0, }; }
-
-	constructor(){
-		super();
-		this.initPort(Object.keys(this.In).length, Object.keys(this.Out).length);
-	}
-
-	onChangeIn(){
-		super.onChangeIn();
-		this.outs[this.Out.amp].latch = this.ins[this.In.in_1].val*this.ins[this.In.in_2].val;
-		return this.update();
-	}
-};
 
 var Mixer = class extends Component{
 	get In(){ return {in_1: 0, in_2: 1}; }

@@ -44,11 +44,11 @@ public:
   Component();
   vector<PortIn_p> getIntIns();
   vector<PortOut_p> getIntOuts();
-  virtual map<string, int> getIn();
+  virtual map<string, int> getIn(); // map だと重いし冗長な記述になるため、引数string戻り値ポートに変更予定。
   virtual map<string, int> getOut();
   void initPort(int in_n, int out_n);
   void onSimStart();
-  void onChangeIn(deque<Component *> &chcoms);
+  virtual void onChangeIn(deque<Component *> &chcoms);
   virtual void onChangeTime(double dt, deque<Component *> &chcoms);
   void onSimEnd();
   virtual void exportExtends();

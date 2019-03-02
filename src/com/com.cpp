@@ -17,6 +17,17 @@ static vector<Component *(*)(string)> g_new_com_funcs;
         });                                                            \
     } while (0)
 
+void initCom()
+{
+    g_com_names.clear();
+    g_new_com_funcs.clear();
+
+    registerComponent(Speaker);
+    registerComponent(Input);
+    registerComponent(Sine);
+    registerComponent(Amplifier);
+}
+
 Component *newCom(string com_name)
 {
     for (Component *(*func)(string) : g_new_com_funcs)
@@ -30,14 +41,4 @@ Component *newCom(string com_name)
     }
 
     return nullptr;
-}
-
-void initCom()
-{
-    g_com_names.clear();
-    g_new_com_funcs.clear();
-
-    registerComponent(Speaker);
-    registerComponent(Input);
-    registerComponent(Sine);
 }

@@ -5,9 +5,10 @@ map<string, int> Input::getIn()
 	return map<string, int>();
 }
 
+#define OUT_VALUE 0
 map<string, int> Input::getOut()
 {
-	return map<string, int>{{"value", 0}};
+	return map<string, int>{{"value", OUT_VALUE}};
 }
 
 double Input::setValue(double value)
@@ -26,7 +27,7 @@ Input::Input() : Component()
 void Input::onChangeTime(double dt, deque<Component *> &chcoms)
 {
 	Component::onChangeTime(dt, chcoms);
-	this->outs[this->getOut()["value"]]->setLatch(this->val);
+	this->outs[OUT_VALUE]->setLatch(this->val);
 	this->update(chcoms);
 }
 
