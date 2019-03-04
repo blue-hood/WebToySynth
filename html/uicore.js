@@ -1,10 +1,10 @@
-var Editor = class{
-	static get max_z(){
+var Editor = class {
+	static get max_z() {
 		return ++Editor._max_z;
 	}
 
-	constructor(jqobj, jqside, coms, sk){
-		this.sk = sk;
+	constructor(jqobj, jqside, Module) {
+		this.module = Module;
 		this._uicoms = [];
 		this._jqobj = jqobj;
 		this._jqside = jqside;
@@ -16,34 +16,50 @@ var Editor = class{
 		this._selcoms = [];
 		this._selcomposs = [];
 
-		this.sk.clearCom();
-		this._jqside.html('<h3 style="display: inline; font-size: inherit; font-weight: inherit; ">Components</h3><br>');
+		var com_names = Module.ccall('getComponentNames', 'string', null, null).split(',');
+		com_names.pop();
+
+		Module.ccall('clearCom', null, null, null);
+		this._jqside.html('<h3 style="display: inline; font-size: inherit; font-weight: inherit; ">部品</h3><br>');
 
 		var add = () => {
-			var com = eval("new "+listbox.val()+"()");
-			this.sk.appendCom(com);
+			try {
+				var com_name = listbox.val();
+				var uuid = Module.ccall('appendCom', 'string', ['string'], [com_name]);
+				if (!uuid) {
+					throw "部品を追加できませんでした。";
+				}
 
-			var uicom = new com.ui_class(com, this);
-			uicom.initDom();
-			uicom.x = this._jqobj.scrollLeft() + Editor.border_left;
-			uicom.y = this._jqobj.scrollTop() + Editor.border_top;
+				var uicom;
+				if (window['Ui' + com_name]) {
+					uicom = new window['Ui' + com_name](uuid, this);
+				} else {
+					uicom = new UiComponent(uuid, this);
+				}
+				uicom.initDom();
+				uicom.x = this._jqobj.scrollLeft() + Editor.border_left;
+				uicom.y = this._jqobj.scrollTop() + Editor.border_top;
 
-			this.appendUiComponent(uicom);
+				this.appendUiComponent(uicom);
+			} catch (e) {
+				alert(e);
+				throw e;
+			}
 		}
 
-		var listbox = $('<select style="overflow-y: hidden; margin-bottom: 1ex; "></select>');
-		coms.forEach((class_, i) => {
+		var listbox = $('<select style="overflow-y: hidden; margin-bottom: 1ex; width: 100%; "></select>');
+		com_names.forEach((com_name) => {
 			var option = $('<option style="cursor: pointer; "></option>');
 			option.dblclick((e) => {
 				add();
 			});
-			option.append(class_.name);
+			option.append(com_name);
 			listbox.append(option);
 		});
-		listbox.attr("size", coms.length);
+		listbox.attr("size", com_names.length);
 		this._jqside.append(listbox);
 
-		var jqaddbtn = $('<br><button style="width: 100%; ">追加 ＋</button>');
+		var jqaddbtn = $('<br><button style="width: 100%; ">追加 ➕</button>');
 		jqaddbtn.click((e) => {
 			add();
 		});
@@ -51,40 +67,40 @@ var Editor = class{
 
 		var jqviewbtn = $('<br><button style="width: 100%; ">ドキュメント 📄</button>');
 		jqviewbtn.click((e) => {
-			window.open("doc/"+listbox.val()+"/");
+			window.open("doc/" + listbox.val() + "/");
 		});
 		this._jqside.append(jqviewbtn);
 
-		var addMacro = (file, name) => {
+		var addCustom = (file, name) => {
 			var sk = new Sketch();
-	        	sk.import(file);
+			sk.import(file);
 
 			var com = new Custom();
 			com.sketch = sk;
-                        this.sk.appendCom(com);
+			this.sk.appendCom(com);
 
-                        var uicom = new UiCustom(com, this);
-                        uicom.initDom();
-                        uicom.x = this._jqobj.scrollLeft() + Editor.border_left;
-                        uicom.y = this._jqobj.scrollTop() + Editor.border_top;
+			var uicom = new UiCustom(com, this);
+			uicom.initDom();
+			uicom.x = this._jqobj.scrollLeft() + Editor.border_left;
+			uicom.y = this._jqobj.scrollTop() + Editor.border_top;
 			uicom.name = name;
-                        this.appendUiComponent(uicom);
+			this.appendUiComponent(uicom);
 		}
 
-		var jqlibbtn = $('<br><button style="width: 100%; margin-top: 2ex; ">ライブラリー 📔</button>');
+		var jqlibbtn = $('<br><button style="width: 100%; margin-top: 2ex; ">カスタム部品 ⚙</button>');
 		jqlibbtn.click((e) => {
-                        var input = document.createElement("input");
-                        input.type= "file";
-                        input.accept =".syn";
-                        input.onchange = (e) => {
-                                var reader = new FileReader();
-				var name = e.target.files[0].name.replace(".syn", "");
-                                reader.onloadend = (e) => {
-					addMacro(JSON.parse(e.target.result).sketch, name);
-                                };
-                                reader.readAsText(e.target.files[0]);
-                        };
-                        input.click();
+			var input = document.createElement("input");
+			input.type = "file";
+			input.accept = ".json";
+			input.onchange = (e) => {
+				var reader = new FileReader();
+				var name = e.target.files[0].name.replace(".json", "");
+				reader.onloadend = (e) => {
+					addCustom(JSON.parse(e.target.result).sketch, name);
+				};
+				reader.readAsText(e.target.files[0]);
+			};
+			input.click();
 		});
 		this._jqside.append(jqlibbtn);
 
@@ -92,7 +108,7 @@ var Editor = class{
 		this._jqsel = $('<div style="position: absolute; border: 1px dotted gray; z-index: 65536; "></div>');
 		var jqpointer = $('<span id="pointer" style="position: absolute; "></span>');
 		jq_selevent.on("mousedown", (e) => {
-			if (!this._prevent_sel){
+			if (!this._prevent_sel) {
 				var org_e = e.originalEvent;
 				this._sel1x = this._sel2x = org_e.clientX + jq_selevent.scrollLeft();
 				this._sel1y = this._sel2y = org_e.clientY + jq_selevent.scrollTop();
@@ -106,24 +122,23 @@ var Editor = class{
 		});
 		jq_selevent.on("mousemove", (e) => {
 			var org_e = e.originalEvent;
-			if (this._issel){
+			if (this._issel) {
 				this._sel2x = org_e.clientX + jq_selevent.scrollLeft();
 				this._sel2y = org_e.clientY + jq_selevent.scrollTop();
 
-				this._jqsel.offset({left: Math.min(this._sel1x, this._sel2x), top: Math.min(this._sel1y, this._sel2y)});
+				this._jqsel.offset({ left: Math.min(this._sel1x, this._sel2x), top: Math.min(this._sel1y, this._sel2y) });
 				this._jqsel.width(Math.abs(this._sel1x - this._sel2x)).height(Math.abs(this._sel1y - this._sel2y));
 			}
 		});
 		jq_selevent.on("mouseup", (e) => {
-			if (this._issel){
+			if (this._issel) {
 				this._selcoms = [];
 				this._selcomposs = [];
 				this._uicoms.forEach((uicom) => {
 					if (uicom.select(Math.min(this._sel1x, this._sel2x), Math.min(this._sel1y, this._sel2y),
-						Math.max(this._sel1x, this._sel2x), Math.max(this._sel1y, this._sel2y)))
-					{
+						Math.max(this._sel1x, this._sel2x), Math.max(this._sel1y, this._sel2y))) {
 						this._selcoms.push(uicom);
-						this._selcomposs.push({x: uicom.x, y: uicom.y});
+						this._selcomposs.push({ x: uicom.x, y: uicom.y });
 					}
 				});
 
@@ -133,7 +148,7 @@ var Editor = class{
 		});
 		jq_selevent.on("drag", (e) => {
 			var org_e = e.originalEvent;
-			jqpointer.offset({left: org_e.clientX + jq_selevent.scrollLeft(), top: org_e.clientY + jq_selevent.scrollTop()});
+			jqpointer.offset({ left: org_e.clientX + jq_selevent.scrollLeft(), top: org_e.clientY + jq_selevent.scrollTop() });
 		});
 		this._jqobj.append(this._jqsel);
 		this._jqobj.append(jqpointer);
@@ -142,11 +157,11 @@ var Editor = class{
 		Editor.border_top = this._jqside.offset().top;
 	}
 
-	preventSel(){
+	preventSel() {
 		this._prevent_sel = true;
 	}
 
-	selComDispose(){
+	selComDispose() {
 		this._selcoms.forEach((selcom) => {
 			this.sk.removeCom(selcom.com);
 			selcom.dispose();
@@ -154,52 +169,52 @@ var Editor = class{
 		this._selcoms = [];
 	}
 
-	selComReverse(){
+	selComReverse() {
 		this._selcoms.forEach((selcom) => {
 			selcom.reverse();
 		});
 	}
 
-	selComDragStart(){
+	selComDragStart() {
 		this._selcoms.forEach((selcom) => {
 			selcom.jqobj.css("z-index", Editor.max_z);
 		});
 	}
 
-	selComDrag(orgcom){
+	selComDrag(orgcom) {
 		var org_i = this._selcoms.indexOf(orgcom);
 		this._selcoms.forEach((selcom, i) => {
-			selcom.x = orgcom.x + (this._selcomposs[i].x - this._selcomposs[org_i].x) ;
-			selcom.y = orgcom.y + (this._selcomposs[i].y - this._selcomposs[org_i].y) ;
+			selcom.x = orgcom.x + (this._selcomposs[i].x - this._selcomposs[org_i].x);
+			selcom.y = orgcom.y + (this._selcomposs[i].y - this._selcomposs[org_i].y);
 			selcom.onMove();
 		});
 	}
 
-	selComDragStop(){
+	selComDragStop() {
 		this._selcoms.forEach((selcom) => {
 			var offset = selcom.jqobj.offset();
-			selcom.x = offset.left ;
-			selcom.y = offset.top ;
+			selcom.x = offset.left;
+			selcom.y = offset.top;
 			selcom.onMove();
 		});
 	}
 
-	appendUiComponent(uicom){
+	appendUiComponent(uicom) {
 		//this.sk.appendCom(uicom.com);
 		this._uicoms.push(uicom);
 		this._jqobj.append(uicom.jqobj);
 	}
-	removeUiComponent(rm){
+	removeUiComponent(rm) {
 		//this.sk.removeCom(rm.com);
-		var is_dispose = this._uicoms.filter((uicom) => { return uicom==rm; }).length;
-		this._uicoms = this._uicoms.filter((uicom) => { return uicom!=rm; });
+		var is_dispose = this._uicoms.filter((uicom) => { return uicom == rm; }).length;
+		this._uicoms = this._uicoms.filter((uicom) => { return uicom != rm; });
 		if (is_dispose) rm.dispose();
 	}
-	clearUiComponent(){
-		while(this._uicoms.length) this.removeUiComponent(this._uicoms[0]);
+	clearUiComponent() {
+		while (this._uicoms.length) this.removeUiComponent(this._uicoms[0]);
 	}
 
-	export(){
+	export() {
 		var ex = {};
 
 		var uicoms = [];
@@ -210,10 +225,10 @@ var Editor = class{
 		return ex;
 	}
 
-	import(im, lut){
+	import(im, lut) {
 		this.clearUiComponent();
 		im.uicoms.forEach((im) => {
-			var com = this.sk.coms.filter((com) => { return com.id==im.com_id; })[0];
+			var com = this.sk.coms.filter((com) => { return com.id == im.com_id; })[0];
 			var uicom = new com.ui_class(com, this);
 			uicom.import(im);
 			this.appendUiComponent(uicom);
@@ -230,9 +245,9 @@ Editor.dragobj = null;
 Editor.border_left = 0;
 Editor.border_top = 0;
 
-var UiComponent = class{
-	constructor(com, uisk){
-		this.com = com;
+var UiComponent = class {
+	constructor(uuid, uisk) {
+		this.uuid = uuid;
 		this.jqobj = null;
 		this._jqname = null;
 		this._uiins = [];
@@ -243,11 +258,16 @@ var UiComponent = class{
 
 		this.jqobj = $('<table style="position: absolute; border-collapse: collapse; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4); background-color: white; border: 1px solid lightgray; cursor: move; font-size: small; "></table>');
 		this._jqname = $('<input style="border: none; background-color: inherit; text-align: center; width: 96px; font-size: inherit; ">');
-		this.name = this.com.constructor.name;
+		this.name = this._uisk.module.ccall('getComponentName', 'string', ['string'], [this.uuid]);
+		if (!this.name) return;
 
-		this.com.ins.forEach((in_, i) => {
-			var uiin = new UiPortIn(in_, this._isrev);
-			uiin.name = Object.keys(this.com.In)[i];
+		var portins = this._uisk.module.ccall('getPortIns', 'string', ['string'], [this.uuid]).split(',');
+		if (!portins) return;
+		portins.pop();
+
+		portins.forEach((uuid, i) => {
+			var uiin = new UiPortIn(uuid, this._isrev);
+			uiin.name = "TEST";//Object.keys(this.com.In)[i];
 			this._uiins.push(uiin);
 		});
 
@@ -258,7 +278,7 @@ var UiComponent = class{
 		});
 	}
 
-	initDom(){
+	initDom() {
 		this.jqobj.empty();
 		{
 			var column;
@@ -271,7 +291,7 @@ var UiComponent = class{
 				var close = $('<span style="padding: 0 0.25em; cursor: default; ">❌</span>');
 				close.mousedown((e) => {
 					if (this._issel) this._uisk.selComDispose();
-					else{
+					else {
 						this._uisk.sk.removeCom(this.com);
 						this.dispose();
 					}
@@ -281,28 +301,28 @@ var UiComponent = class{
 				column = $('<tr style="border-bottom: 1px solid lightgray; "></tr>').append($('<th colspan="2" style="font-weight: normal; padding-left: 0.5em; padding-right: 0.5em; background-color: lemonchiffon"></th>').append(this._jqname).append(right));
 			}
 			this.jqobj.append(column);
-			if (!this._isrev){
+			if (!this._isrev) {
 				column = $('<tr style="text-align: center; "><td>In</td><td>Out</td></tr>');
-			}else{
+			} else {
 				column = $('<tr style="text-align: center; "><td>Out</td><td>In</td></tr>');
 			}
 			this.jqobj.append(column);
 
-			for(var i = 0; i<this._uiins.length || i<this._uiouts.length; i++){
+			for (var i = 0; i < this._uiins.length || i < this._uiouts.length; i++) {
 				var jqin = $("<td></td>");
-				if (i<this._uiins.length){
+				if (i < this._uiins.length) {
 					jqin.append(this._uiins[i].jqobj);
 				}
 
 				var jqout = $('<td></td>');
-				if (i<this._uiouts.length){
+				if (i < this._uiouts.length) {
 					jqout.append(this._uiouts[i].jqobj);
 				}
 
-				if (!this._isrev){
+				if (!this._isrev) {
 					jqout.css("text-align", "right");
 					column = $('<tr></tr>').append(jqin).append(jqout);
-				}else{
+				} else {
 					jqin.css("text-align", "right");
 					column = $('<tr></tr>').append(jqout).append(jqin);
 				}
@@ -314,26 +334,26 @@ var UiComponent = class{
 		}
 		this.jqobj.draggable({
 			start: (e) => {
-				if (this._issel){
+				if (this._issel) {
 					this._uisk.selComDragStart();
-				}else{
+				} else {
 					this.jqobj.css("z-index", Editor.max_z);
 				}
 			},
 			drag: (e) => {
-				if (this._issel){
+				if (this._issel) {
 					this._uisk.selComDrag(this);
-				}else{
+				} else {
 					this.onMove();
 				}
 			},
 			stop: () => {
-				if (this._issel){
+				if (this._issel) {
 					this._uisk.selComDragStop();
-				}else{
+				} else {
 					var offset = this.jqobj.offset();
-					this.x = offset.left ;
-					this.y = offset.top ;
+					this.x = offset.left;
+					this.y = offset.top;
 					this.onMove();
 				}
 			},
@@ -345,36 +365,36 @@ var UiComponent = class{
 		this.onMove();
 	}
 
-	initConnection(){
+	initConnection() {
 		this._uiouts.forEach((uiout) => {
 			uiout.initConnection();
 		});
 	}
 
-	set x(value){
+	set x(value) {
 		var x = Math.max(value, Editor.border_left);
 		this.jqobj.css("left", x.toString());
 	}
-	get x(){
+	get x() {
 		return this.jqobj.offset().left;
 	}
 
-	set y(value){
+	set y(value) {
 		var y = Math.max(value, Editor.border_top);
 		this.jqobj.css("top", y.toString());
 	}
-	get y(){
+	get y() {
 		return this.jqobj.offset().top;
 	}
 
-	set name(value){
+	set name(value) {
 		this._jqname.val(value);
 	}
-	get name(){
+	get name() {
 		return this._jqname.val();
 	}
 
-	onMove(){
+	onMove() {
 		this._uiins.forEach((uiin) => {
 			uiin.onMove();
 		});
@@ -383,7 +403,7 @@ var UiComponent = class{
 		});
 	}
 
-	reverse(){
+	reverse() {
 		this._isrev ^= true;
 		this._uiins.forEach((uiin) => {
 			uiin.reverse();
@@ -394,18 +414,18 @@ var UiComponent = class{
 		this.initDom();
 	}
 
-	set issel(value){
+	set issel(value) {
 		this._issel = value;
 
-		if (this._issel){
+		if (this._issel) {
 			this.jqobj.css("border", "2px solid gray");
-		}else{
+		} else {
 			this.jqobj.css("border", "1px solid lightgray");
 		}
 	}
 
-	select(sel1x, sel1y, sel2x, sel2y){
-		if (this.x>=sel1x && this.y>=sel1y && this.x + this.jqobj.width()<sel2x && this.y + this.jqobj.height()<sel2y){
+	select(sel1x, sel1y, sel2x, sel2y) {
+		if (this.x >= sel1x && this.y >= sel1y && this.x + this.jqobj.width() < sel2x && this.y + this.jqobj.height() < sel2y) {
 			this.issel = true;
 			return true;
 		}
@@ -413,7 +433,7 @@ var UiComponent = class{
 		return false;
 	}
 
-	export(){
+	export() {
 		var ex = {};
 		ex.com_id = this.com.id;
 		ex.x = this.x;
@@ -423,7 +443,7 @@ var UiComponent = class{
 		return ex;
 	}
 
-	import(im){
+	import(im) {
 		this.initDom();
 		this.x = im.x;
 		this.y = im.y;
@@ -431,7 +451,7 @@ var UiComponent = class{
 		if (im.isrev) this.reverse();
 	}
 
-	dispose(){
+	dispose() {
 		this._uiins.forEach((uiin) => {
 			uiin.dispose();
 		});
@@ -446,9 +466,9 @@ var UiComponent = class{
 	}
 }
 
-var UiPortIn = class{
-	constructor(in_, isrev){
-		this.in_ = in_;
+var UiPortIn = class {
+	constructor(uuid, isrev) {
+		this.id = uuid;
 		this.jqobj = null;
 		this._jqname = null;
 		this._jqradio = null;
@@ -457,9 +477,6 @@ var UiPortIn = class{
 		this._isrev = isrev;
 		this._defaultname = "";
 
-		this.in_.ui = this;
-
-		this.id = UUID.generate();
 		this._jqname = $('<input style="width: 48px; border: none; text-align: inherit; ">');
 		this._jqname.val(this.in_.int);
 		this.nameIntCheck();
@@ -470,28 +487,28 @@ var UiPortIn = class{
 		this.initDom();
 	}
 
-	initDom(){
+	initDom() {
 		this.jqobj.empty();
-		if (!this._isrev){
+		if (!this._isrev) {
 			this.jqobj.append(this._jqradio);
 			this.jqobj.append(this._jqname);
-		}else{
+		} else {
 			this.jqobj.append(this._jqname);
 			this.jqobj.append(this._jqradio);
 		}
 	}
 
-	initEvent(){
+	initEvent() {
 		this._jqradio.on("dragover", (e) => {
 			var org_e = e.originalEvent;
-			if (org_e.dataTransfer.types.includes("application/uiportout")){
+			if (org_e.dataTransfer.types.includes("application/uiportout")) {
 				org_e.dataTransfer.dropEffect = "link";
 				org_e.preventDefault();
 			}
 		});
 		this._jqradio.on("drop", (e) => {
 			var org_e = e.originalEvent;
-			if (org_e.dataTransfer.types.includes("application/uiportout")){
+			if (org_e.dataTransfer.types.includes("application/uiportout")) {
 				this.connect(Editor.dragobj);
 			}
 		});
@@ -505,34 +522,34 @@ var UiPortIn = class{
 		});
 	}
 
-	nameIntCheck(){
-		if (this._jqname.val()==""){
+	nameIntCheck() {
+		if (this._jqname.val() == "") {
 			this._jqname.val(this._defaultname);
 		}
-		if (this._defaultname!=this._jqname.val()){
+		if (this._defaultname != this._jqname.val()) {
 			this.in_.int = this._jqname.val();
 			this._jqname.css("background-color", "lightpink");
-		}else{
+		} else {
 			this.in_.int = "";
 			this._jqname.css("background-color", "white");
 		}
 	}
 
-	onMove(){
+	onMove() {
 		if (this.src) this.src.onMove();
 	}
 
-	connect(src){
+	connect(src) {
 		this.disconnect();
 		this.src = src;
 		this.src.appendTo(this);
 		this.in_.connect(src.out);
 	}
 
-	disconnect(){
-		if (this.src){
-			var rm = this.src.tos.filter((to) => { return to.uiin==this; })[0];
-			this.src.tos = this.src.tos.filter((to) => { return to!=rm; });
+	disconnect() {
+		if (this.src) {
+			var rm = this.src.tos.filter((to) => { return to.uiin == this; })[0];
+			this.src.tos = this.src.tos.filter((to) => { return to != rm; });
 			rm.arrow.remove();
 
 			this.src = null;
@@ -540,25 +557,25 @@ var UiPortIn = class{
 		}
 	}
 
-	reverse(){
+	reverse() {
 		this._isrev ^= true;
 		this.initDom();
 	}
 
-	set name(value){
+	set name(value) {
 		this._defaultname = value;
-		if (this.in_.int=="") this._jqname.val(value);
+		if (this.in_.int == "") this._jqname.val(value);
 	}
 
-	dispose(){
+	dispose() {
 		this.disconnect();
 		this.jqobj.remove();
 		delete this;
 	}
 };
 
-var UiPortOut = class{
-	constructor(out, isrev){
+var UiPortOut = class {
+	constructor(out, isrev) {
 		this.out = out;
 		this.jqobj = null;
 		this._jqname = null;
@@ -581,18 +598,18 @@ var UiPortOut = class{
 		this.initDom();
 	}
 
-	initDom(){
+	initDom() {
 		this.jqobj.empty();
-		if (!this._isrev){
+		if (!this._isrev) {
 			this.jqobj.append(this._jqname);
 			this.jqobj.append(this._jqradio);
-		}else{
+		} else {
 			this.jqobj.append(this._jqradio);
 			this.jqobj.append(this._jqname);
 		}
 	}
 
-	initEvent(){
+	initEvent() {
 		this._jqradio.on("dragstart", (e) => {
 			var org_e = e.originalEvent;
 			org_e.dataTransfer.setData("application/uiportout", "");
@@ -601,8 +618,8 @@ var UiPortOut = class{
 
 		});
 		this._jqradio.on("drag", (e) => {
-			if (!this._dragarrow){
-				if ($("#pointer").offset().left){
+			if (!this._dragarrow) {
+				if ($("#pointer").offset().left) {
 					this._dragarrow = new LeaderLine(
 						document.getElementById(this.id),
 						document.getElementById("pointer"),
@@ -635,33 +652,33 @@ var UiPortOut = class{
 		});
 	}
 
-	nameIntCheck(){
-		if (this._jqname.val()==""){
+	nameIntCheck() {
+		if (this._jqname.val() == "") {
 			this._jqname.val(this._defaultname);
 		}
-		if (this._defaultname!=this._jqname.val()){
+		if (this._defaultname != this._jqname.val()) {
 			this.out.int = this._jqname.val();
 			this._jqname.css("background-color", "lightpink");
-		}else{
+		} else {
 			this.out.int = "";
 			this._jqname.css("background-color", "white");
 		}
 	}
 
-	initConnection(){
+	initConnection() {
 		this.clearTo();
 		this.out.tos.forEach((to) => {
 			to.ui.connect(this);
 		});
 	}
 
-	onMove(){
+	onMove() {
 		this.tos.forEach((to) => {
 			to.arrow.position();
 		});
 	}
 
-	appendTo(to){
+	appendTo(to) {
 		var arrow = new LeaderLine(
 			document.getElementById(this.id),
 			document.getElementById(to.id),
@@ -671,28 +688,28 @@ var UiPortOut = class{
 				//path: "grid",
 			}
 		);
-		this.tos.push({uiin: to, arrow: arrow});
+		this.tos.push({ uiin: to, arrow: arrow });
 	}
 
-	removeTo(rmin){
+	removeTo(rmin) {
 		rmin.disconnect();
 	}
 
-	clearTo(){
-		while(this.tos.length) this.removeTo(this.tos[0].uiin);
+	clearTo() {
+		while (this.tos.length) this.removeTo(this.tos[0].uiin);
 	}
 
-	reverse(){
+	reverse() {
 		this._isrev ^= true;
 		this.initDom();
 	}
 
-	set name(value){
+	set name(value) {
 		this._defaultname = value;
-		if (this.out.int=="") this._jqname.val(value);
+		if (this.out.int == "") this._jqname.val(value);
 	}
 
-	dispose(){
+	dispose() {
 		this.clearTo();
 		this.jqobj.remove();
 		delete this;

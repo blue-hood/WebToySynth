@@ -3,12 +3,6 @@
 <head>
 	<meta charset="utf-8">
 
-	<meta name="twitter:card" content="summary" />
-	<meta name="twitter:site" content="@bluehood_admin" />
-	<meta property="og:title" content="Troopa 👀" />
-	<meta property="og:description" content="Web 上で作るおもちゃシンセサイザー。" />
-	<!--<meta property="og:image" content="https://twiverse.net/etc/troopa/eyes.png" />-->
-
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118660329-1"></script>
 	<script>
@@ -19,34 +13,36 @@
 		gtag('config', 'UA-118660329-1');
 	</script>
 
-	<title>Troopa 👀</title>
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="@bluehood_admin" />
+	<meta property="og:title" content="WebToySynth 👀" />
+	<meta property="og:description" content="Web おもちゃシンセサイザー。" />
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
 		integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
-	<script src="UUID.js/src/uuid.js"></script>
 	<script src="leader-line/leader-line.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 	<script src="//twemoji.maxcdn.com/2/twemoji.min.js?11.3"></script>
 
-	<script src="core.js"></script>
-	<script src="ui.js"></script>
-	<script src="com.js"></script>
+	<script src="uicore.js"></script>
+	<script src="uicom.js"></script>
 
 	<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
 	<link href='style.css' rel='stylesheet'>
+
+	<title>WebToySynth 👀</title>
 </head>
 
 <body>
 	<nav>
-		<h1>Troopa</h1> <span style="font-size: large; ">👀</span>
-		<h2>: Web おもちゃシンセサイザー。</h2>
+		<h1>WebToySynth 👀</h1>
 		<span style="margin-left: 1em; ">
-			<button id="btn-play">実行 <span style="color: hotpink; ">🔊</span></button>
+			<button id="btn-play">実行 🔊</button>
 			<span style="margin-left: 1em; ">
 				<button id="btn-load">開く 📂</button>
 				<button id="btn-save">保存 💾</button>
-				<input id="filename" value="sample.syn" style="width: 96px; " placeholder="filename.syn">
+				<input id="filename" value="sketch.json" style="width: 96px; " placeholder="filename.json">
 			</span>
 			<span style="margin-left: 1em; font-size: small; ">
 				<a href="tutorial/" target="_blank"><button>チュートリアル 🔰</button></a>
@@ -65,36 +61,14 @@
 		var postRun = () => {
 			var is_play = false;
 
-			var sk = new Sketch();
 			$("aside").css("margin-top", $("nav").outerHeight());
-			var edit = new Editor($("body"), $("aside"), [
-				Input,
-				Keyboard,
-				Sine,
-				Square,
-				Saw,
-				Triangle,
-				Noise,
-				Buffer,
-				Mixer,
-				Subtractor,
-				Amplifier,
-				Divider,
-				Integrator,
-				Differentiator,
-				UpperSaturator,
-				LowerSaturator,
-				Speaker,
-				Meter,
-				Scope,
-				Repeater,
-			], sk);
+			var edit = new Editor($("body"), $("aside"), Module);
 
-			{
+			/*{
 				var file = JSON.parse('{"sketch":{"coms":[{"type":"Sine","id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","ins":[{"id":"38b207c5-38d3-4786-b866-72a7b91101fd","isint":false}],"outs":[{"tos":["e96b3686-b665-4b65-b08e-19a1c62eadb2"],"isint":false}]},{"type":"Speaker","id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","ins":[{"id":"e96b3686-b665-4b65-b08e-19a1c62eadb2","isint":false}],"outs":[{"tos":["77a8677b-2d63-4f1a-8736-839cdb104ca7"],"isint":false}]},{"type":"Input","id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","ins":[],"outs":[{"tos":["38b207c5-38d3-4786-b866-72a7b91101fd"],"isint":false}]},{"type":"Scope","id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","ins":[{"id":"77a8677b-2d63-4f1a-8736-839cdb104ca7","isint":false}],"outs":[{"tos":[],"isint":false}]}]},"ui":{"uicoms":[{"com_id":"63c186b2-7337-44e5-96ea-a4ea8d6b2c3a","x":339,"y":84,"name":"Sine","isrev":false},{"com_id":"1c1e2194-65a6-4afd-82e5-8fb6482f0133","x":542,"y":84,"name":"Speaker","isrev":false},{"com_id":"9649b56d-6e77-4ace-8213-0fc7b4522d57","x":143,"y":84,"name":"Input","isrev":false,"value":440},{"com_id":"eb3b15a4-e97c-410a-b372-f08cedf94e35","x":757.125,"y":84,"name":"Scope","isrev":false,"mode":1,"trig":0,"skip":1}]}}');
 				var lut = sk.import(file.sketch);
 				edit.import(file.ui, lut);
-			}
+			}*/
 
 			var ctx;
 			var scproc;
@@ -106,25 +80,19 @@
 
 				scproc.onaudioprocess = (e) => {
 					var out = e.outputBuffer.getChannelData(0);
-					try {
-						var dt = 1.0 / e.outputBuffer.sampleRate;
-						var bufferPtr = Module.ccall('onAudioProcess', 'number', ['number'], [dt]);
-						if (!bufferPtr) {
-							throw "エラーが発生しました。";
-						}
-						var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
-						buffer.forEach((data, i) => {
-							out[i] = data;
-						});
-					} catch (e) {
+					var dt = 1.0 / e.outputBuffer.sampleRate;
+					var bufferPtr = Module.ccall('onAudioProcess', 'number', ['number'], [dt]);
+					if (!bufferPtr) {
 						simEnd();
-						alert(e);
-						throw e;
 					}
+					var buffer = new Float32Array(Module.HEAPF32.buffer, bufferPtr, out.length);
+					buffer.forEach((data, i) => {
+						out[i] = data;
+					});
 				};
 
 				Module.ccall('onSimStart', null, null, null);
-				$("#btn-play").html('停止 <span style="color: hotpink; ">🔇</span>');
+				$("#btn-play").html('停止 🔇');
 				$("nav").css("background-color", "mistyrose");
 				twemoji.parse($("#btn-play")[0]);
 			}
@@ -134,7 +102,7 @@
 				scproc.disconnect(ctx.destination);
 				Module.ccall('onSimEnd', null, null, null);
 				ctx.close();
-				$("#btn-play").html('実行 <span style="color: hotpink; ">🔊</span>');
+				$("#btn-play").html('実行 🔊');
 				$("nav").css("background-color", "white");
 				twemoji.parse($("#btn-play")[0]);
 			};
@@ -151,7 +119,7 @@
 			$("#btn-load").click(() => {
 				var input = document.createElement("input");
 				input.type = "file";
-				input.accept = ".syn";
+				input.accept = ".json";
 				input.onchange = (e) => {
 					var reader = new FileReader();
 					reader.onloadend = (e) => {
@@ -208,6 +176,8 @@
 			$(window).on("beforeunload", (e) => {
 				return true;
 			});
+
+			twemoji.parse(document.body);
 		};
 		var Module = {
 			postRun: postRun, printErr: (stderr) => {
@@ -215,7 +185,6 @@
 			}
 		};
 
-		twemoji.parse(document.body);
 	</script>
 	<script src="module.js"></script>
 </body>
