@@ -1,6 +1,0 @@
-[submodule "html/leader-line"]
-	path = html/leader-line
-	url = https://github.com/anseki/leader-line
-[submodule "src/cereal"]
-	path = src/cereal
-	url = https://github.com/USCiLab/cereal
